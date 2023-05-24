@@ -79,8 +79,13 @@ const sendMessage = async () => {
 
 onMounted(async () => {
   if (Cookies.get("accessToken") && Cookies.get("user")) {
-    await chatStore.init();
-    localStreamRef.value.srcObject = chatStore.localStream;
+  try{
+   await chatStore.init();
+   //localStreamRef.value.srcObject = chatStore.localStream;
+    //alert("onmounted")
+    }catch(e){
+    alert(e)
+    }
   } else {
     return;
   }
@@ -94,6 +99,7 @@ onMounted(async () => {
       >
         <video
           ref="remoteStreamRef"
+          
           class="w-full h-full object-cover z-[99999]"
         ></video>
         <ExclamationCircleIcon
@@ -132,6 +138,8 @@ onMounted(async () => {
           autoplay
           muted
           ref="localStreamRef"
+          id="fuck"
+          style="border:10px solid green"
           class="w-full h-full object-cover z-[99999]"
         ></video>
       </div>
