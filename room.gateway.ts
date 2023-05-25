@@ -137,6 +137,7 @@ this.server.to(partnerQueue.socketId).emit("waitOffer", {from: socket.id});
     }
 
 //TODO: ТИпо работает
+//TODO: ТИпо работает => Почему типо работает? События есть , но почему data.roomId и data.offer undefined?? Хотя с клиента я явно эти данные отсылаю?
     @SubscribeMessage('offer')
     handleOffer(data: { offer: any, roomId: string }) {
 		console.log("*** ON OFFER *** ", data.offer, "data roomid ", data.roomId);
