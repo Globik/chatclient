@@ -28,7 +28,10 @@ export const socket = io(URL, {
    Authorization: `Bearer ${Cookies.get("accessToken")}`,
   },
 });
-
+socket.on('onConnection', d=>{
+	state.clientId = d.connectionId;
+	console.warn(d.connectionId);
+})
 socket.on("connect", (s) => {
   state.connected = true;
  // alert(s);
@@ -64,19 +67,19 @@ console.log(data);
 };
 
 socket.on("onFindRoom", async (data) => {
-	return;
+
 	console.log("ROOM FOUNDED!: ", data);
 
   try {
     const chatStore = useChatStore();
-     state.clientId = data.socketId;
-    state.target = data.partner.socketId;
+   //  state.clientId = data.socketId;
+    //state.target = data.partner.socketId;
    // await chatStore.createOffer(data.roomId);
-   await chatStore.createOffer(state.target, state.clientId);
+  // await chatStore.createOffer(state.target, state.clientId);
     toast.success(`You connected with ${data.partner.id}`);
     await chatStore.updateRoom("connected", true);
     await chatStore.updateRoom("id", data.roomId);
-    await chatStore.updateRoom("partner", data.partner.id);
+    await chatStore.updateRoom("partner", data.partner.socketId);
    
 
     state.loading = false;
@@ -92,22 +95,25 @@ socket.on("onFindRoom", async (data) => {
 });
 socket.on("makeOffer", async (data) => {
 	console.log("makeOffer!!: ", data);
-	 state.clientId = data.from;
     state.target = data.to;
+    
+  try {
+    const chatStore = useChatStore();
+    await chatStore.createOffer(state.target, state.clientId);
+}catch(e){console.error(e)}
 })
 socket.on("waitOffer", async (data) => {
 	console.log("waitOffer!: ", data);
-	 state.clientId = data.from;
-    state.target = data.to;
+    state.target = data.from;
 });
-socket.on("onOffer", async (data) => {
+socket.on("onoffer", async (data) => {
 	alert("onOffer!");
   try {
     const chatStore = useChatStore();
 
    //  await chatStore.createAnswer(data.offer, data.roomId);
-		await chatStore.createAnswer(data.offer, data.target);
-    console.log(data);
+		await chatStore.createAnswer(data.offer, state.target, state.clientId);
+   // console.log(data);
   } catch (error) {
     console.log(error);
     toast.error(error.message);
@@ -116,7 +122,7 @@ socket.on("onOffer", async (data) => {
   }
 });
 
-socket.on("onAnswer", async (data) => {
+socket.on("answer", async (data) => {
   const chatStore = useChatStore();
 
   await chatStore.addAnswer(data.answer);
@@ -127,6 +133,13 @@ socket.on("onAnswer", async (data) => {
 socket.on("onJoinToQueue", (data) => {
   console.log(data);
 });
+
+socket.on('iceCandidate', (data)=>{
+	console.warn("candidate: ", data);
+	const chatStore = useChatStore();
+
+	chatStore.handleCandidate(data.candidate)
+})
 
 socket.on("onException", (data) => {
   state.searching = false;

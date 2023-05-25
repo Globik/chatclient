@@ -90,9 +90,9 @@ console.log("*** this.queue: ***", this.queue)
         const partnerSocket = this.server.sockets.sockets.get(partnerQueue.socketId);
         partnerSocket.join(roomId);
         partnerQueue.isBusy = true;
-
-		this.server.to(socket.id).emit("makeOffer", {to: partnerQueue.socketId, from: socket.id});
-		this.server.to(partnerQueue.socketId).emit("waitOffer", {from: socket.id, to: partnerQueue.socketId});
+this.server.to(partnerQueue.socketId).emit("waitOffer", {from: socket.id});
+		this.server.to(socket.id).emit("makeOffer", {to: partnerQueue.socketId});
+	//	this.server.to(partnerQueue.socketId).emit("waitOffer", {from: socket.id, to: partnerQueue.socketId});
         this.server.to(roomId).emit('onFindRoom', {
             roomId,
             socketId:socket.id,
@@ -139,7 +139,8 @@ console.log("*** this.queue: ***", this.queue)
 //TODO: ТИпо работает
     @SubscribeMessage('offer')
     handleOffer(data: { offer: any, roomId: string }) {
-        this.server.to(data.roomId).emit('offer', data.offer);
+		console.log("*** ON OFFER *** ", data.offer, "data roomid ", data.roomId);
+        this.server.to(data.roomId).emit('onoffer', {offer:"offer"});
     }
 
     @SubscribeMessage('answer')

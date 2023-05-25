@@ -84,7 +84,7 @@ if('ontrack' in peerConnection.value){
 
     peerConnection.value.onicecandidate = (iceEvent) => {
       if (iceEvent && iceEvent.candidate) {
-        socket.emit('iceCandidate', {candidate: iceEvent.candidate, roomId })
+        socket.emit('iceCandidate', {candidate: iceEvent.candidate, roomId: roomDetails.partner })
       }
     };
     peerConnection.value.oniceconnectionstatechange = iceConnectionStateChange;
@@ -136,24 +136,41 @@ function onSignalingState(e){
 	console.log("signaling state: " + peerConnection.value.signalingState);
 }
 
-const createOffer = async(roomId, from)=>{
+function handleCandidate(candidate){
+	//if(peerConnection.value){
+		//var cand = new RTCIceCandidate(candidate);
+		peerConnection.value.addIceCandidate(candidate).then(function(){
+			
+		}).catch(function(e){console.error(e)});
+	//}
+}
+
+const createOffer = async(target, from)=>{
+	console.log("*** CREATING OFFER *** ", target, " ", from);
 	createPeer();
+	
 	peerConnection.value.createOffer().then(function(offer){
 		return peerConnection.value.setLocalDescription(offer);
 	}).then(function(){
-	
+	console.log(" *** SENDING OFFER ***");
+	if(!peerConnection.value.localDescription){
+		console.log("RETURN ***");
+		return;
+	}
+	let d = {roomId: target, offer: peerConnection.value.localDescription.sdp, from: from};
+	console.warn(d);
 		//wsend({'type': 'offer', offer: pc.localDescription, target: target, from: clientId});
-		socket.emit("offer", {roomId: roomId, offer: peerConnection.value.localDescription, from: from});
+		socket.emit("offer", d);
 	}).catch(function(err){alert(err);});
 }
-  const createAnswer = async (offer, roomId) => {
+  const createAnswer = async (offer, roomId, clientId) => {
 	  createPeer();
     await peerConnection.value.setRemoteDescription(offer);
 
     let answer = await peerConnection.value.createAnswer();
     await peerConnection.value.setLocalDescription(answer);
 
-    socket.emit("answer", { answer: peerConnection.value.localDescription, roomId });
+    socket.emit("answer", { answer: peerConnection.value.localDescription, roomId : roomId, from: clientId});
     console.log("Answer sent: ", { answer, roomId });
   };
   
