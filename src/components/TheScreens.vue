@@ -12,7 +12,7 @@ import TheCountries from "./TheCountries.vue";
 import { useSearchPartner } from "../stores/searchPartner";
 import { useChatStore } from "../stores/chat";
 import { useUserStore } from "../stores/user";
-import { state, findNewRoom } from "../socket";
+import { state, findNewRoom, stopRoom } from "../socket";
 import TheEmojiPicker from "./TheEmojiPicker.vue";
 import Cookies from "js-cookie";
 import { socket } from "../socket";
@@ -81,7 +81,8 @@ onMounted(async () => {
   if (Cookies.get("accessToken") && Cookies.get("user")) {
   try{
    await chatStore.init();
-   //localStreamRef.value.srcObject = chatStore.localStream;
+ //   const chatStore = useChatStore();
+  remoteStreamRef.value.srcObject = chatStore.remoteStream;
     //alert("onmounted")
     }catch(e){
     alert(e)
@@ -99,7 +100,8 @@ onMounted(async () => {
       >
         <video
           ref="remoteStreamRef"
-          
+          id="REMOTE"
+          autoplay
           class="w-full h-full object-cover z-[99999]"
         ></video>
         <ExclamationCircleIcon
@@ -139,7 +141,6 @@ onMounted(async () => {
           muted
           ref="localStreamRef"
           id="fuck"
-          style="border:10px solid green"
           class="w-full h-full object-cover z-[99999]"
         ></video>
       </div>
@@ -159,13 +160,14 @@ onMounted(async () => {
           {{ state.inRoom ? "Cоединенный" : "Старт" }}
         </button>
         <button
-          :disabled="
+        @click="stopRoom()"
+        :disabled="
             state.loading ||
-            !state.inRoom ||
+            state.inRoom ||
             state.searching ||
             searchPartnerStore.loading
           "
-          class="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
+         class="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
         >
           Стоп
         </button>
@@ -224,6 +226,7 @@ onMounted(async () => {
     </div>
     <TheCountries />
   </div>
+ 
 </template>
 
 <style scoped>

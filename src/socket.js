@@ -34,13 +34,26 @@ socket.on('onConnection', d=>{
 })
 socket.on("connect", (s) => {
   state.connected = true;
- // alert(s);
 });
 
 socket.on("disconnect", () => {
   state.connected = false;
 });
 
+
+export const stopRoom = async function(){
+	 
+	 console.warn("stop");
+	 const chatStore = useChatStore();
+			chatStore.leavePeer(state.clientId);
+			state.target = null;
+	await chatStore.updateRoom("connected", false);
+    await chatStore.updateRoom("id", "");
+    await chatStore.updateRoom("partner", "");
+ };
+
+ 
+ 
 export const findNewRoom = async (data) => {
   try {
     state.loading = true;
@@ -50,13 +63,17 @@ export const findNewRoom = async (data) => {
    const chatStore = useChatStore();
   
     fuck.srcObject = chatStore.localStream;
-    
+   
     fuck.onloadedmetadata = function () {
 		
-	 socket.emit("joinToQueue", { userId: data.userId });
-console.log(data);
+	 socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
+console.log("here data: ",data);
    let t = setInterval(() => {
-	  if(!state.target)	socket.emit("findRoom", data);}, 5000);
+	 if(state.target) return;
+console.warn(data)
+	  	socket.emit("findRoom", data);
+	  }, 5000);
+	
 }
 }catch (error) {
     console.log(error);
@@ -66,9 +83,18 @@ console.log(data);
   }
 };
 
-socket.on("onFindRoom", async (data) => {
+socket.on('onLeaveRoom', async (data) => {
+	console.log("on leave room");
+	try {
+    const chatStore = useChatStore();
+    chatStore.handleLeave(false, true);
+}catch(e){
+	console.error(e);
+}
+})
 
-	console.log("ROOM FOUNDED!: ", data);
+socket.on("onFindRoom", async (data) => {
+console.log("ROOM FOUNDED!: ", JSON.stringify(data));
 
   try {
     const chatStore = useChatStore();
@@ -78,7 +104,7 @@ socket.on("onFindRoom", async (data) => {
   // await chatStore.createOffer(state.target, state.clientId);
     toast.success(`You connected with ${data.partner.id}`);
     await chatStore.updateRoom("connected", true);
-    await chatStore.updateRoom("id", data.roomId);
+    await chatStore.updateRoom("id", data.socketId);
     await chatStore.updateRoom("partner", data.partner.socketId);
    
 
@@ -100,20 +126,33 @@ socket.on("makeOffer", async (data) => {
   try {
     const chatStore = useChatStore();
     await chatStore.createOffer(state.target, state.clientId);
+    await chatStore.updateRoom("connected", false);
+    await chatStore.updateRoom("id", data.roomId);
+    await chatStore.updateRoom("partner", state.target);
+    state.loading = false;
+    state.searching = false;
 }catch(e){console.error(e)}
 })
 socket.on("waitOffer", async (data) => {
 	console.log("waitOffer!: ", data);
     state.target = data.from;
+    const chatStore = useChatStore();
+    await chatStore.updateRoom("connected", false);
+    await chatStore.updateRoom("id", data.roomId);
+    await chatStore.updateRoom("partner", state.target);
+    state.loading = false;
+    state.searching = false;
 });
-socket.on("onoffer", async (data) => {
-	alert("onOffer!");
+socket.on("offer", async (data) => {
+	console.log("Sending Answer!");
+    //console.log(data);
   try {
     const chatStore = useChatStore();
 
    //  await chatStore.createAnswer(data.offer, data.roomId);
-		await chatStore.createAnswer(data.offer, state.target, state.clientId);
+		await chatStore.createAnswer(data, state.target, state.clientId);
    // console.log(data);
+  
   } catch (error) {
     console.log(error);
     toast.error(error.message);
@@ -125,20 +164,17 @@ socket.on("onoffer", async (data) => {
 socket.on("answer", async (data) => {
   const chatStore = useChatStore();
 
-  await chatStore.addAnswer(data.answer);
-
-  console.log(data);
+  await chatStore.addAnswer(data);
 });
 
 socket.on("onJoinToQueue", (data) => {
-  console.log(data);
+  console.log("join to queue ", data);
 });
 
 socket.on('iceCandidate', (data)=>{
-	console.warn("candidate: ", data);
+//	console.warn("candidate: ", data);
 	const chatStore = useChatStore();
-
-	chatStore.handleCandidate(data.candidate)
+	chatStore.handleCandidate(data);
 })
 
 socket.on("onException", (data) => {
