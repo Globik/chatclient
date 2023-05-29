@@ -98,6 +98,7 @@ if('ontrack' in peerConnection.value){
   };
   
  function onConnectionStateChange(e){
+	 if(!peerConnection.value) return;
 	console.log('connection state: ' + peerConnection.value.connectionState);
 
 	if(peerConnection.value.connectionState == "failed" || peerConnection.value.connectionState == "closed" || peerConnection.value.connectionState == "disconnected"){
