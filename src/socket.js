@@ -5,7 +5,7 @@ import { useChatStore } from "./stores/chat";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
-
+var t;
 export const state = reactive({
   connected: false,
   fooEvents: [],
@@ -18,12 +18,12 @@ export const state = reactive({
 });
 //const localStreamRef = ref(null);
 //const chatStore = useChatStore();
-const localStreamRef = ref(null);
+//const localStreamRef = ref(null);
 const URL = import.meta.env.DEV? import.meta.env.VITE_SERVER_HOST_DEV : import.meta.env.VITE_SERVER_HOST_PROD;
  //alert(URL);
  //let ru=import.meta.env.VITE_SERVER_HOST_PROD
 // alert(Cookies.get("accessToken"));
-export const socket = io(URL, {
+export const socket = io(URL, {transports: ['websocket'],
   extraHeaders: {
    Authorization: `Bearer ${Cookies.get("accessToken")}`,
   },
@@ -39,37 +39,58 @@ socket.on("connect", (s) => {
 socket.on("disconnect", () => {
   state.connected = false;
 });
+ const onHello = async function(event) { 
+	 //  alert("hello");
+	   console.error("hello");
+	  state.loading = false;
+    state.searching = false;
+    state.inRoom = true;
+    const chatStore = useChatStore();
+     let roomDet = await chatStore.updateRoom("connected", true);
+     console.log("roomDetails: ", roomDet);
+	 }
 
-
-export const stopRoom = async function(){
-	 
+export const stopRoom = async function(el){
+//	alert(el.target.getAttribute('data-disabled'));
+	 if(t){clearInterval(t);}
 	 console.warn("stop");
 	 const chatStore = useChatStore();
+	 
 			chatStore.leavePeer(state.clientId);
+			fuck.removeEventListener("hello", onHello);
 			state.target = null;
+			if(state.searching)state.searching = false;
+          if(state.loading)  state.loading = false;
+          state.inRoom = false;
+			socket.emit("bye", {});
 	await chatStore.updateRoom("connected", false);
     await chatStore.updateRoom("id", "");
     await chatStore.updateRoom("partner", "");
+    
  };
 
- 
+ //const someEvent = new Event("hello");
  
 export const findNewRoom = async (data) => {
+	console.log("start");
   try {
-    state.loading = true;
-    state.searching = true;
-    
+   
+    fuck.addEventListener("hello", onHello, true);
   
    const chatStore = useChatStore();
-  
+  await chatStore.init();
     fuck.srcObject = chatStore.localStream;
+  
    
     fuck.onloadedmetadata = function () {
-		
+
 	 socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
+	  state.loading = true;
+    state.searching = true;
 console.log("here data: ",data);
-   let t = setInterval(() => {
+   t = setInterval(() => {
 	 if(state.target) return;
+	 //alert(state.target);
 console.warn(data)
 	  	socket.emit("findRoom", data);
 	  }, 5000);
@@ -78,16 +99,19 @@ console.warn(data)
 }catch (error) {
     console.log(error);
     toast.error(error.message);
-    state.loading = false;
-    state.searching = false;
+   // state.loading = false;
+   // state.searching = false;
   }
 };
 
-socket.on('onLeaveRoom', async (data) => {
-	console.log("on leave room");
+socket.on( 'onLeaveRoom', async (data) => {
+	console.warn("*** on leave room ***");
+	
+	state.target = null;
 	try {
     const chatStore = useChatStore();
     chatStore.handleLeave(false, true);
+    
 }catch(e){
 	console.error(e);
 }
@@ -120,7 +144,7 @@ console.log("ROOM FOUNDED!: ", JSON.stringify(data));
   }
 });
 socket.on("makeOffer", async (data) => {
-	console.log("makeOffer!!: ", data);
+	console.log("makeOffer!!: ", JSON.stringify(data));
     state.target = data.to;
     
   try {
@@ -129,19 +153,19 @@ socket.on("makeOffer", async (data) => {
     await chatStore.updateRoom("connected", false);
     await chatStore.updateRoom("id", data.roomId);
     await chatStore.updateRoom("partner", state.target);
-    state.loading = false;
-    state.searching = false;
+   // state.loading = false;
+   // state.searching = false;
 }catch(e){console.error(e)}
 })
 socket.on("waitOffer", async (data) => {
-	console.log("waitOffer!: ", data);
+	console.log("waitOffer!: ", JSON.stringify(data));
     state.target = data.from;
     const chatStore = useChatStore();
     await chatStore.updateRoom("connected", false);
     await chatStore.updateRoom("id", data.roomId);
     await chatStore.updateRoom("partner", state.target);
-    state.loading = false;
-    state.searching = false;
+   // state.loading = false;
+   // state.searching = false;
 });
 socket.on("offer", async (data) => {
 	console.log("Sending Answer!");
@@ -178,9 +202,10 @@ socket.on('iceCandidate', (data)=>{
 })
 
 socket.on("onException", (data) => {
-  state.searching = false;
-  state.loading = false;
+ // state.searching = false;
+ // state.loading = false;
   console.log(data);
+  toast.error(data.message);
 });
 
 socket.on("onNewMessage", async (data) => {

@@ -14,7 +14,7 @@ export const useChatStore = defineStore("chat-store", () => {
     connected: false,
     partner: "",
   });
-
+const someEvent = new Event("hello", { cancelable: false });
   const init = async () => {
 	 // alert('init');
 	 
@@ -24,7 +24,6 @@ export const useChatStore = defineStore("chat-store", () => {
       video:true,
       audio: true
     });
-    
     
 }catch(e){console.log("hier "+e);}
 
@@ -116,7 +115,8 @@ function iceConnectionStateChange(e){
 				
 			}else if(peerConnection.value.iceConnectionState == "connected"){
 				//wsend({type: "unfertig", target: targetId});
-				
+			
+				fuck.dispatchEvent(someEvent);
 				//remoteVideoBox.className = "";
 				//btnStart.disabled = false;
 				updateRoom("connected", true);
@@ -163,22 +163,24 @@ const createOffer = async(target, from)=>{
 		return;
 	}
 	let d = {roomId: target, offer: peerConnection.value.localDescription, from: from};
-	console.warn(d);
+	console.log("target:", target, " from: ", from);
 		//wsend({'type': 'offer', offer: pc.localDescription, target: target, from: clientId});
 		socket.emit("offer", d);
-	}).catch(function(err){alert(err);});
+	}).catch(function(err){console.error(err);});
 }
   const createAnswer = async (offer, roomId, clientId) => {
 	 // alert(offer);
 	  roomDetails.partner = roomId;
 	  createPeer();
+	  try{
     await peerConnection.value.setRemoteDescription(offer);
 
     let answer = await peerConnection.value.createAnswer();
     await peerConnection.value.setLocalDescription(answer);
 
     socket.emit("answer", { answer: peerConnection.value.localDescription, roomId : roomId, from: clientId});
-    console.log("Answer sent: ", { answer, roomId });
+    console.log("Answer sent: ", "to: ", roomId, "from: ", clientId);
+}catch(e){console.error(e);}
   };
   
   
@@ -236,13 +238,13 @@ const createOffer = async(target, from)=>{
 	peerConnection.value = null;
 	updateRoom("connected", false);
     updateRoom("id", "");
-    updateRoom("partner", ""); // TODO: state.target = null in socket.js !!!
+    updateRoom("partner", "");
   if(bool)  socket.emit("ready", { ready: true });
 	//btnStart.disabled = true;
 }
   const disconnect = async (userId) => {};
   //localStream.value.on
-
+ 
   return {
     init,
     localStream,

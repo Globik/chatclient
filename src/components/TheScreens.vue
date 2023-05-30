@@ -80,9 +80,9 @@ const sendMessage = async () => {
 onMounted(async () => {
   if (Cookies.get("accessToken") && Cookies.get("user")) {
   try{
-   await chatStore.init();
+  // await chatStore.init();
  //   const chatStore = useChatStore();
-  remoteStreamRef.value.srcObject = chatStore.remoteStream;
+  //remoteStreamRef.value.srcObject = chatStore.remoteStream;
     //alert("onmounted")
     }catch(e){
     alert(e)
@@ -157,16 +157,14 @@ onMounted(async () => {
           "
           class="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
         >
-          {{ state.inRoom ? "Cоединенный" : "Старт" }}
+          {{ state.inRoom ? "Далее" : "Старт" }}
         </button>
         <button
         @click="stopRoom()"
+       
         :disabled="
-            state.loading ||
-            state.inRoom ||
-            state.searching ||
-            searchPartnerStore.loading
-          "
+            !state.inRoom
+            "
          class="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
         >
           Стоп

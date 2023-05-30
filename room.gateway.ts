@@ -18,51 +18,69 @@ export class RoomGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @WebSocketServer() 
     private server: Server;
     
-    queue: Queue[] = [];// здесь я предлагаю не массив использовать , а queue = new Map();
+   queue: Queue[] = [];// здесь я предлагаю не массив использовать , а queue = new Map();
 	q = new Map<string, any>();
     async handleConnection(@ConnectedSocket() socket: Socket) {
-        this.queue.push({
+       /* this.queue.push({
             socketId: socket.id
-        } as Queue);        
-     this.q.set(socket.id, { socketId: socket.id });
+        } as Queue);  */      
+     this.q.set(socket.id, { socketId: socket.id, isBusy: true });
      console.log("q: ", this.q);
-        console.log(this.queue);
+       
          this.server.to(socket.id).emit('onConnection', { connectionId: socket.id });
         
         
     }
 
     async handleDisconnect(@ConnectedSocket() socket: Socket) {   
-        let queue = this.queue.find(queue => queue.socketId === socket.id);
+      //  let queue = this.queue.find(queue => queue.socketId === socket.id);
+        
+        
+        let a = this.q.get(socket.id);
+        if(a){
+			if(a.partner){
+			this.server.to(a.partner).emit('onLeaveRoom', {
+            membersId: a.partner,//clientId (from)
+            roomId: socket.id});
+            const memberSocket = this.server.sockets.sockets.get(socket.id);
+            if(memberSocket) memberSocket.leave(a.roomId);
+            const memberSocket2 = this.server.sockets.sockets.get(a.partner);
+            if(memberSocket2) memberSocket2.leave(a.roomId);
+		}
+		}
+        
+       
         this.q.delete(socket.id);
         console.log("handle disconnect q=> ", this.q);
-        if (queue) {
+       /* if (queue) {
             var index = this.queue.indexOf(queue);
             if (index !== -1) {
                 this.queue.splice(index, 1);
             }
-        }      
+        }*/      
     }
 
     //@UseGuards(WsGuard)
     @SubscribeMessage('joinToQueue')
     async joinToQueue(@MessageBody() dto: FindNewRoomDto, @ConnectedSocket() socket: Socket) {
         let user = await this.userService.getUserById(dto.userId).catch((e) => {
+			console.log(e.message);
             this.server.to(socket.id).emit('onException', {
                 statusCode: e.status,
                 message: e.message
             });
 
-            stop();
+           // stop();//undefined
         }) as User;
 console.log("*** ON JOIN QUEUE ***: ", dto);
-        this.queue.push({
+      /*  this.queue.push({
             socketId: socket.id,
             userId: dto.userId,
             gender: dto.gender,
             country: dto.country,
             isBusy: false
         });
+        */ 
 		let q = this.q.has(socket.id);
 		if(q){
 			let a = this.q.get(socket.id);
@@ -114,13 +132,11 @@ console.log("*** ON JOIN QUEUE ***: ", dto);
  }
  
  console.log("*** RANDOM *** ", random);
-		/*
-		let p = arr.find(u => u.country === dto.country 
-              && u.gender === dto.gender 
-              && u.socketId !== socket.id
-             && !u.isBusy);
-             console.log("*** IS FOUND? *** ", p);
-             */ 
+ if(!random){
+	 console.log("NOT FOUND");
+	 return;
+ }
+	/*
         let partnerQueue = this.queue.find(queue => queue.country === dto.country 
               && queue.gender === dto.gender 
               && queue.socketId !== socket.id
@@ -138,11 +154,12 @@ console.log("*** ON JOIN QUEUE ***: ", dto);
           }
           if(!partnerQueue){console.log("***NOT FOUND ***");return;}
           console.log("[]=> ", this.queue);
-          let myQueue = this.queue.find(queue => queue.socketId === socket.id);
+          */
+        //  let myQueue = this.queue.find(queue => queue.socketId === socket.id);
           let myqueue = this.q.get(socket.id);
           //this.queue = [];
           //console.log("[]=> ", this.queue);
-          let roomId = await this.gatewayService.create([dto.userId, partnerQueue.userId]).catch((e) => {
+          let roomId = await this.gatewayService.create([dto.userId, /*partnerQueue*/random.userId]).catch((e) => {
               this.server.to(socket.id).emit('onException', {
                   statusCode: e.status,
                   message: e.message
@@ -152,19 +169,24 @@ console.log("*** ON JOIN QUEUE ***: ", dto);
           });
    
           socket.join(roomId);
-          myQueue.isBusy = true;
-  if(myqueue) myqueue.isBusy = true;
+         // myQueue.isBusy = true;
+  if(myqueue) {
+	  myqueue.isBusy = true;
+	  myqueue.partner = random.socketId;
+  }
           const partnerSocket = this.server.sockets.sockets.get(/*partnerQueue*/random.socketId);
          if(partnerSocket) partnerSocket.join(roomId);
-          partnerQueue.isBusy = true;
+         // partnerQueue.isBusy = true;
+          
           let abba = this.q.get(random.socketId);
           if(abba){
 			  abba.isBusy = true;
+			abba.partner = socket.id
 		  }
 		  console.log("*** new Map *** ", this.q);
-          this.server.to(partnerQueue.socketId).emit("waitOffer", {from: socket.id, roomId: roomId, gender: dto.gender, country: dto.country});
+          this.server.to(/*partnerQueue*/random.socketId).emit("waitOffer", {from: socket.id, roomId: roomId, gender: dto.gender, country: dto.country});
           this.server.to(socket.id).emit("makeOffer", {to: /*partnerQueue*/random.socketId, roomId: roomId, gender: /*partnerQueue*/random.gender, country: /*partnerQueue*/random.country});
-      
+      /*
       let a = {
 			roomId: roomId,
              socketId:socket.id,
@@ -178,21 +200,35 @@ console.log("*** ON JOIN QUEUE ***: ", dto);
               gender: dto.gender,
               country: dto.country
 		  }
-		  console.log("*** A ***: ", a);
+		  */ 
+		//  console.log("*** A ***: ", a);
        //   this.server.to(roomId).emit('onFindRoom', a );
     }
+
+@SubscribeMessage('bye')
+    async onBye( @ConnectedSocket() socket: Socket) {
+		console.log("*** BYE ***");
+		let q = this.q.get(socket.id);
+		if(q){
+			q.isBusy = true;
+			q.partner = undefined;
+		}
+	}
+
+
 
     //@UseGuards(WsGuard)
     @SubscribeMessage('leaveRoom')
     async onLeaveRoom(@MessageBody() dto: LeaveRoomDto, @ConnectedSocket() socket: Socket) {
 		console.log("*** LEAVEROOM ***: ", dto);
         await this.gatewayService.leave(dto).catch((e) => {
+			console.log(e.message, e.status);
             this.server.to(socket.id).emit('onException', {
                 statusCode: e.status,
                 message: e.message
             });
 
-          stop();// undefined
+        //  stop();// undefined
         });
 
         this.server.to(dto.roomId).emit('onLeaveRoom', {
@@ -200,16 +236,27 @@ console.log("*** ON JOIN QUEUE ***: ", dto);
             roomId: dto.roomId 
         });
 
-        this.queue.forEach(item => {
-            dto.membersId.forEach(id => {// is not a function
-                if (item.userId === id) {
-                    item.isBusy = false;
-                    const memberSocket = this.server.sockets.sockets.get(item.socketId);
-                    memberSocket.leave(dto.roomId);
-                }
-            });
-        });
-        console.log("*** ON leave []=> ", this.queue);
+      //  this.queue.forEach(item => {
+           // dto.membersId.forEach(id => {// is not a function
+              //  if (item.userId === id) {
+                 //   item.isBusy = false;
+                    const memberSocket = this.server.sockets.sockets.get(socket.id);
+                   if(memberSocket) memberSocket.leave(dto.roomId);
+               // }
+           // });
+       // });
+        let q = this.q.get(socket.id);
+        if(q){
+			q.partner = undefined;
+			q.isBusy = false;
+		} 
+		let a = this.q.get(dto.roomId);
+		if(a){
+			a.partner = undefined;
+			a.isBusy = false;
+		}
+       
+        console.log("*** ON leave this,q[]=> ", this.q);
     }
 
     //@UseGuards(WsGuard)
