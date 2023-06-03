@@ -28,17 +28,26 @@ export const socket = io(URL, {transports: ['websocket'],
    Authorization: `Bearer ${Cookies.get("accessToken")}`,
   },
 });
-socket.on('onConnection', d=>{
-	state.clientId = d.connectionId;
-	console.warn(d.connectionId);
-})
-socket.on("connect", (s) => {
+
+socket.on("connect", () => {
   state.connected = true;
+  console.log(socket.id);
+  state.clientId = socket.id;
 });
 
 socket.on("disconnect", () => {
   state.connected = false;
 });
+
+const onInterval = function(data) {
+	console.warn("interval");
+	 if(state.target) return;
+	 //alert(state.target);
+//console.warn(data)
+	if(!state.target) socket.emit("findRoom", data);
+	  }
+
+
  const onHello = async function(event) { 
 	 //  alert("hello");
 	   console.error("hello");
@@ -51,14 +60,24 @@ socket.on("disconnect", () => {
 	 }
 
 export const stopRoom = async function(el){
-//	alert(el.target.getAttribute('data-disabled'));
-	 if(t){clearInterval(t);}
+
+	 if(t){
+		// alert("clearInterval");
+		 clearInterval(t);
+		 t = undefined;
+		 }
 	 console.warn("stop");
 	 const chatStore = useChatStore();
 	 
 			chatStore.leavePeer(state.clientId);
+			if(fuck.srcObject){
+		fuck.srcObject.getTracks().forEach(function(track){
+			track.stop();
+		});
+		}
+		fuck.srcObject = null;
 			fuck.removeEventListener("hello", onHello);
-			state.target = null;
+			state.target = undefined;
 			if(state.searching)state.searching = false;
           if(state.loading)  state.loading = false;
           state.inRoom = false;
@@ -66,6 +85,8 @@ export const stopRoom = async function(el){
 	await chatStore.updateRoom("connected", false);
     await chatStore.updateRoom("id", "");
     await chatStore.updateRoom("partner", "");
+   if(state.connected) socket.close();
+    
     
  };
 
@@ -73,11 +94,14 @@ export const stopRoom = async function(el){
  
 export const findNewRoom = async (data) => {
 	console.log("start");
+	
+	if(!state.connected) socket.connect();
+	 const chatStore = useChatStore();
   try {
-   
-    fuck.addEventListener("hello", onHello, true);
+   if(!fuck.srcObject){
+	       fuck.addEventListener("hello", onHello, true);
   
-   const chatStore = useChatStore();
+  
   await chatStore.init();
     fuck.srcObject = chatStore.localStream;
   
@@ -88,13 +112,12 @@ export const findNewRoom = async (data) => {
 	  state.loading = true;
     state.searching = true;
 console.log("here data: ",data);
-   t = setInterval(() => {
-	 if(state.target) return;
-	 //alert(state.target);
-console.warn(data)
-	  	socket.emit("findRoom", data);
-	  }, 5000);
-	
+if(!t){
+   t = setInterval(onInterval, 5000, data);
+	}
+}
+}else{
+			chatStore.leavePeer(state.clientId);
 }
 }catch (error) {
     console.log(error);
@@ -108,9 +131,10 @@ socket.on( 'onLeaveRoom', async (data) => {
 	console.warn("*** on leave room ***");
 	
 	state.target = null;
+	state.searching = true;
 	try {
     const chatStore = useChatStore();
-    chatStore.handleLeave(false, true);
+    chatStore.handleLeave(false);
     
 }catch(e){
 	console.error(e);

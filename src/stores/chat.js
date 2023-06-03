@@ -102,7 +102,7 @@ if('ontrack' in peerConnection.value){
 
 	if(peerConnection.value.connectionState == "failed" || peerConnection.value.connectionState == "closed" || peerConnection.value.connectionState == "disconnected"){
 	//second
-	handleLeave(false, true);
+	handleLeave(false);
 }
 }
 
@@ -125,7 +125,7 @@ function iceConnectionStateChange(e){
 				}else if(peerConnection.value.iceConnectionState == "failed" || 
 				peerConnection.value.iceConnectionState == "disconnected"){
 				//first
-				handleLeave(false, true);
+				handleLeave(false);
 			}else{}
 		}
 	}
@@ -195,13 +195,8 @@ const createOffer = async(target, from)=>{
   };
  const leavePeer = (from) => {
 	
-		handleLeave(from, false);
+		handleLeave(from);
 		
-		if(fuck.srcObject){
-		fuck.srcObject.getTracks().forEach(function(track){
-			track.stop();
-		});
-		}
 		}
  
   const pushMessage = async (msg) => {
@@ -214,8 +209,8 @@ const createOffer = async(target, from)=>{
     return roomDetails;
   };
   
- function handleLeave(from, bool){
-	if(from)socket.emit("leaveRoom", { membersId: from, roomId: roomDetails.partner });
+ function handleLeave(from){
+	if(from)socket.emit("leaveRoom", { to: from,  membersId: roomDetails.partner, roomId: roomDetails.id });
 	if(!peerConnection.value) return;
 	 if(REMOTE.srcObject){
 		REMOTE.srcObject.getTracks().forEach(function(track){
@@ -239,8 +234,7 @@ const createOffer = async(target, from)=>{
 	updateRoom("connected", false);
     updateRoom("id", "");
     updateRoom("partner", "");
-  if(bool)  socket.emit("ready", { ready: true });
-	//btnStart.disabled = true;
+ // if(bool)  socket.emit("ready", { ready: true });
 }
   const disconnect = async (userId) => {};
   //localStream.value.on

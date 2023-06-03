@@ -80,6 +80,7 @@ const sendMessage = async () => {
 onMounted(async () => {
   if (Cookies.get("accessToken") && Cookies.get("user")) {
   try{
+  fuck.srcObject = null;
   // await chatStore.init();
  //   const chatStore = useChatStore();
   //remoteStreamRef.value.srcObject = chatStore.remoteStream;
@@ -153,7 +154,7 @@ onMounted(async () => {
         <button
           @click="findNewRoom(findRoomArgs)"
           :disabled="
-            state.loading || state.inRoom || searchPartnerStore.loading
+            state.loading || state.searching || searchPartnerStore.loading
           "
           class="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
         >
@@ -161,7 +162,6 @@ onMounted(async () => {
         </button>
         <button
         @click="stopRoom()"
-       
         :disabled="
             !state.inRoom
             "
