@@ -16,7 +16,7 @@ export const useVkLogin = () => {
   // basic configuration for request
   const options = {
     client_id: import.meta.env.VITE_VK_ID,
-    redirect_uri: import.meta.env.DEV ? import.meta.env.VITE_VK_REDIRECT : import.meta.env.production.VITE_VK_REDIRECT_PROD,
+    redirect_uri: import.meta.env.DEV ? import.meta.env.VITE_VK_REDIRECT : import.meta.env.VITE_VK_REDIRECT_PROD,
     response_type: "token",
     scope: "email",
     display: "page",
