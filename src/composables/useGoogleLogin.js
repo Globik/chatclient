@@ -15,7 +15,7 @@ export const useGoogleLogin = () => {
   // basic configuration for request
   const options = {
     client_id: import.meta.env.VITE_GOOGLE_APP,
-    redirect_uri: import.meta.env.VITE_GOOGLE_REDIRECT,
+    redirect_uri: import.meta.env.DEV ? import.meta.env.VITE_GOOGLE_REDIRECT : import.meta.env.production.VITE_GOOGLE_REDIRECT,
     response_type: "token",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.gender.read openid",
