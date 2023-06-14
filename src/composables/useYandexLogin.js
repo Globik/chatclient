@@ -89,13 +89,19 @@ console.log('yandex-oauth', response.data)
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-    //  window.close();
+    
+     setTimeout(function(){
+		 // window.close();
+	  }, 3000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
+      alert(error);
     } finally {
       await searchPartner.setLoading(false);
-     // window.close();
+      setTimeout(function(){
+		//  window.close();
+	  }, 3000);
     }
   };
 

@@ -71,14 +71,17 @@ export const useVkLogin = () => {
 
       // send request to get userinfo
       const user = await axios.get(
-        `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`,
+        `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131&callback=callbackFunc`,
         {
-          //headers: {
-         //   "Access-Control-Allow-Origin": "*",
-          //},
+         headers: {
+            "Access-Control-Allow-Origin": "*",
+          },
         }
       );
-
+function callbackFunc(result) {
+alert(result)
+console.log("result cb ", result);
+}
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
@@ -108,10 +111,17 @@ export const useVkLogin = () => {
        await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-    //  window.close();
+    
+     setTimeout(function(){
+		 // window.close();
+	  }, 3000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
+      alert(error);
+       setTimeout(function(){
+		//  window.close();
+	  }, 3000);
     }
   };
 

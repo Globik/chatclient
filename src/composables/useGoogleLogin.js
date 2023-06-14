@@ -110,9 +110,16 @@ export const useGoogleLogin = () => {
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
+      setTimeout(function(){
+		  window.close();
+	  }, 3000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
+      alert(error);
+       setTimeout(function(){
+		  window.close();
+	  }, 3000);
     } 
   };
 

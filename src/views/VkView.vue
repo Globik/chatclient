@@ -1,7 +1,8 @@
 <script setup>
 import { onMounted } from "vue";
 import { useVkLogin } from "../composables/useVkLogin";
-
+import { useSearchPartner } from "../stores/searchPartner";
+const searchPartner = useSearchPartner();
 const { getUserData } = useVkLogin();
 
 onMounted(async () => {
