@@ -73,9 +73,9 @@ export const useVkLogin = () => {
       const user = await axios.get(
         `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`,
         {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-          },
+          //headers: {
+         //   "Access-Control-Allow-Origin": "*",
+          //},
         }
       );
 
@@ -108,7 +108,7 @@ export const useVkLogin = () => {
        await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-      window.close();
+    //  window.close();
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);

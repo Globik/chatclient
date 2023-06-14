@@ -84,18 +84,18 @@ console.log('yandex-oauth', response.data)
         response.data.expires,
         "acc"
       );
-searchPartner.toggleGender()
+        searchPartner.toggleGender()
       // update user info again
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-      window.close();
+    //  window.close();
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
     } finally {
       await searchPartner.setLoading(false);
-      window.close();
+     // window.close();
     }
   };
 
