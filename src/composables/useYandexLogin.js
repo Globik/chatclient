@@ -62,7 +62,7 @@ export const useYandexLogin = () => {
       });
 
       const data = await user.data;
-
+console.log("data", data)
       // making userinfo object
       const userInfo = reactive({
         username: user.login,
@@ -77,18 +77,19 @@ export const useYandexLogin = () => {
       await userStore.setUser(userInfo);
 
       const response = await auth.post(`/yandex-oauth`, { ...userInfo });
-
+console.log('yandex-oauth', response.data)
       // set token which is from server (not from yandex)
       await userStore.setToken(
         response.data.access_token,
         response.data.expires,
         "acc"
       );
-
+searchPartner.toggleGender()
       // update user info again
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
+      window.close();
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);

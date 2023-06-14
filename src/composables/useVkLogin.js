@@ -81,33 +81,34 @@ export const useVkLogin = () => {
 
       const data = await user.data;
 
-      console.log(data);
+      console.log('ANY VK DATA ', data);
       // // making userinfo object
-      // const userInfo = reactive({
-      //   username: username.value,
-      //   email: data.email,
-      //   firstname: data.given_name,
-      //   lastname: data.family_name,
-      //   gender: data.gender ? data.gender : "male",
-      //   googleId: data.sub,
-      // });
+      const userInfo = reactive({
+        username: username.value,
+         email: data.email,
+        firstname: data.given_name,
+        lastname: data.family_name,
+        gender: data.gender ? data.gender : "male",
+        googleId: data.sub,
+      });
 
       // // added to store/cookie
-      // await userStore.setUser(userInfo);
+      await userStore.setUser(userInfo);
 
-      // const response = await auth.post(`/google-oauth`, { ...userInfo });
+      const response = await auth.post(`/yandex-oauth`, { ...userInfo });
 
       // // set token which is from server (not from google)
-      // await userStore.setToken(
-      //   response.data.access_token,
-      //   response.data.expires,
-      //   "acc"
-      // );
-
+       await userStore.setToken(
+        response.data.access_token,
+        response.data.expires,
+        "acc"
+      );
+       searchPartner.toggleGender()
       // // update user info again
-      // await userStore.updateUser("userId", response.data.userId);
+       await userStore.updateUser("userId", response.data.userId);
 
-      // await searchPartner.setLoading(false);
+      await searchPartner.setLoading(false);
+      window.close();
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
