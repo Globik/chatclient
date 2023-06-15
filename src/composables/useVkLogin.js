@@ -70,7 +70,7 @@ export const useVkLogin = () => {
       });
 console.log(result.value)
       // send request to get userinfo
-      var user = await axios.get(
+    /*  var user = await axios.get(
         `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`,
         {
          headers: {
@@ -78,7 +78,7 @@ console.log(result.value)
           },
         }
       );
-      
+      */
  user = await auth.post(`/vk-user`, { vkurl: `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131&fields=sex`});
       const data = await user.data;
 
