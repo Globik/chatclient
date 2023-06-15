@@ -94,16 +94,19 @@ console.log('yandex-oauth', response.data)
       await searchPartner.setLoading(false);
     
      setTimeout(function(){
-		 // window.close();
-	  }, 3000);
+		 window.close();
+	  }, 100);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
       alert(error);
+      setTimeout(function(){
+		 window.close();
+	  }, 3000);
     } finally {
       await searchPartner.setLoading(false);
       setTimeout(function(){
-		//  window.close();
+		// window.close();
 	  }, 3000);
     }
   };

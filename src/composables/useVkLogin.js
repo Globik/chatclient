@@ -86,12 +86,12 @@ console.log(result.value)
       console.log('ANY VK DATA ', data);
       // // making userinfo object
       const userInfo = reactive({
-        username: data.first_name,
+        username: data[0].first_name,
          email: result.value.email,
-        firstname: data.first_name,
-        lastname: data.last_name,
-        gender: data.sex == 2 ? "male" : "female",
-        vkontakteId: data.id,
+        firstname: data[0].first_name,
+        lastname: data[0].last_name,
+        gender: data[0].sex == 2 ? "male" : "female",
+        vkontakteId: data[0].id,
       });
 
       // // added to store/cookie
