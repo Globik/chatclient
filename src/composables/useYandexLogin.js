@@ -68,7 +68,7 @@ user = await auth.post(`/yandex-user`, { vkurl: getUserUrl, head: result.value.a
 console.log("data", data)
       // making userinfo object
       const userInfo = reactive({
-        username: user.login,
+        username: data.login,
         email: data.default_email,
         firstname: data.first_name,
         lastname: data.last_name,
