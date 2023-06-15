@@ -63,7 +63,7 @@ console.log(result.value)
         },
       });
 */
-user = await auth.post(`/yandex-user`, { vkurl: getUserUrl, head: `OAuth ${result.value.access_token}`});
+user = await auth.post(`/yandex-user`, { vkurl: getUserUrl, head: result.value.access_token});
       const data = await user.data;
 console.log("data", data)
       // making userinfo object
