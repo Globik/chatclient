@@ -70,7 +70,7 @@ export const useVkLogin = () => {
       });
 console.log(result.value)
       // send request to get userinfo
-    /*  const user = await axios.get(
+      var user = await axios.get(
         `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`,
         {
          headers: {
@@ -78,15 +78,15 @@ console.log(result.value)
           },
         }
       );
-      */ 
-const user = await auth.post(`/vk-user`, { vkurl: `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`});
+      
+ user = await auth.post(`/vk-user`, { vkurl: `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131&fields=sex`});
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
       // // making userinfo object
       const userInfo = reactive({
         username: data.first_name,
-         email: data.first_name + "-" + data.last_name + "@vk.ru",
+         email: result.value.email,
         firstname: data.first_name,
         lastname: data.last_name,
         gender: data.sex == 2 ? "male" : "female",
