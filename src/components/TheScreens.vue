@@ -146,17 +146,17 @@ onMounted(async () => {
         ></video>
       </div>
     </div>
-
-    <div class="flex w-full functions h-[100vh - 682px]">
-      <div
-        class="flex flex-col items-center flex-1 gap-2 p-2 space-x-1 text-2xl font-medium md:flex-row functions-left"
+<!--  functions h-[100% - 682px]    -->
+    <div clas="flex w-full functions h-[100% - 682px] ">
+      <div id="undervideocontainer" 
+        clas="flex flex-col items-center flex-1 gap-2 p-2 space-x-1 text-2xl font-medium md:flex-row functions-left"
       >
         <button
           @click="findNewRoom(findRoomArgs)"
           :disabled="
             state.loading || state.searching || searchPartnerStore.loading
           "
-          class="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
+          cass="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
         >
           {{ state.inRoom ? "Далее" : "Старт" }}
         </button>
@@ -165,14 +165,14 @@ onMounted(async () => {
         :disabled="
             !state.inRoom
             "
-         class="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
+         cass="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
         >
           Стоп
         </button>
         <button
           :disabled="searchPartnerStore.loading || state.loading"
           @click="searchPartnerStore.toggleCountrySearch(true)"
-          class="flex items-center justify-center flex-1 w-full h-full space-x-2 bg-gray-200 rounded-md disabled:bg-gray-400"
+          cass="flex items-center justify-center flex-1 w-full h-full space-x-2 bg-gray-200 rounded-md disabled:bg-gray-400"
         >
           <p v-if="searchPartnerStore.loading || state.loading">Загрузка...</p>
           <p v-else class="flex items-center">
@@ -187,7 +187,7 @@ onMounted(async () => {
         <button
           @click="searchPartnerStore.toggleGender()"
           :disabled="searchPartnerStore.loading || state.loading"
-          class="flex-1 w-full h-full bg-gray-200 rounded-md disabled:bg-gray-400"
+          cass="flex-1 w-full h-full bg-gray-200 rounded-md disabled:bg-gray-400"
         >
           Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
         </button>
@@ -195,16 +195,16 @@ onMounted(async () => {
 
       <form
         @submit.prevent="sendMessage()"
-        class="relative flex flex-1 gap-2 m-2 bg-white rounded-md"
+        cass="relative flex flex-1 gap-2 m-2 bg-white rounded-md"
       >
-        <div class="w-full chat">
-          <div class="chat_msgs">
+        <div cass="w-full chat">
+          <div cass="chat_msgs">
             <p v-for="message in chatStore.messages" class="messages">
               {{ message.text }}
             </p>
           </div>
           <hr />
-          <div class="absolute bottom-0 flex w-full p-2 border-t-2 chat_text">
+          <div cass="absolute bottom-0 flex w-full p-2 border-t-2 chat_text">
             <input
               type="text"
               name="chat_text"
@@ -228,6 +228,13 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+#undervideocontainer{
+	margin-top:5px;
+}
+button[disabled]{
+	background:gray;
+}
+button{background:orange;color:white;font-weight:bold;font-size:1rem;margin-left:10px;padding:15px;margin-bottom:4px;margin-top:4px;}
 .screen_first:hover .report-icon {
   display: block;
 }

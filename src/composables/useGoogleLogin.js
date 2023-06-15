@@ -96,7 +96,7 @@ export const useGoogleLogin = () => {
 
       const response = await auth.post(`/google-oauth`, { ...userInfo });
 
-      // set token which is from server (not from google)
+      // set token which is from server (not from google) index-a4ce7641.js index-a4ce7641.js 
       console.log(response.data.access_token);
       await userStore.setToken(
         response.data.access_token,
@@ -112,7 +112,7 @@ export const useGoogleLogin = () => {
       await searchPartner.setLoading(false);
       setTimeout(function(){
 		  window.close();
-	  }, 3000);
+	  }, 1000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
