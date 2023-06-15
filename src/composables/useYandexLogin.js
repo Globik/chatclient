@@ -55,12 +55,15 @@ export const useYandexLogin = () => {
       });
 console.log(result.value)
       // send request to get userinfo
-      const user = await axios.get(getUserUrl, {
+      var user;
+      
+      /* user = await axios.get(getUserUrl, {
         headers: {
           Authorization: `OAuth ${result.value.access_token}`,
         },
       });
-
+*/
+user = await auth.post(`/yandex-user`, { vkurl: getUserUrl, head: `OAuth ${result.value.access_token}`});
       const data = await user.data;
 console.log("data", data)
       // making userinfo object
