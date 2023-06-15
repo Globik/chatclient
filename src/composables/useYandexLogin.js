@@ -53,7 +53,7 @@ export const useYandexLogin = () => {
           return result;
         }, {});
       });
-
+console.log(result.value)
       // send request to get userinfo
       const user = await axios.get(getUserUrl, {
         headers: {

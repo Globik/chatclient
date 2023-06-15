@@ -68,37 +68,35 @@ export const useVkLogin = () => {
           return result;
         }, {});
       });
-
+console.log(result.value)
       // send request to get userinfo
-      const user = await axios.get(
-        `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131&callback=callbackFunc`,
+    /*  const user = await axios.get(
+        `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`,
         {
          headers: {
             "Access-Control-Allow-Origin": "*",
           },
         }
       );
-function callbackFunc(result) {
-alert(result)
-console.log("result cb ", result);
-}
+      */ 
+const user = await auth.post(`/vk-user`, { vkurl: `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131`});
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
       // // making userinfo object
       const userInfo = reactive({
-        username: username.value,
-         email: data.email,
-        firstname: data.given_name,
-        lastname: data.family_name,
-        gender: data.gender ? data.gender : "male",
-        googleId: data.sub,
+        username: data.first_name,
+         email: data.first_name + "-" + data.last_name + "@vk.ru",
+        firstname: data.first_name,
+        lastname: data.last_name,
+        gender: data.sex == 2 ? "male" : "female",
+        vkontakteId: data.id,
       });
 
       // // added to store/cookie
       await userStore.setUser(userInfo);
 
-      const response = await auth.post(`/yandex-oauth`, { ...userInfo });
+      const response = await auth.post(`/vk-oauth`, { ...userInfo });
 
       // // set token which is from server (not from google)
        await userStore.setToken(
@@ -114,7 +112,7 @@ console.log("result cb ", result);
     
      setTimeout(function(){
 		 // window.close();
-	  }, 3000);
+	  }, 100);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
