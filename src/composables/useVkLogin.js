@@ -84,8 +84,8 @@ console.log(result.value)
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
-      if(data.error_msg){
-		  alert(data.error_msg);
+      if(data.error){
+		  alert(data.error.error_msg);
 		  return;
 	  }
       // // making userinfo object
