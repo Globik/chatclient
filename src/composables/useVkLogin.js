@@ -80,10 +80,14 @@ console.log(result.value)
         }
       );
       */
- user = await auth.post(`/vk-user`, { vkurl: `${getUserUrl}?access_token=${result.value.access_token}&user_ids=${result.value.user_id}&v=5.131&fields=sex`, head:"bla"});
+ user = await auth.post(`/vk-user`, { vkurl: getUserUrl, access_token: result.value.access_token, user_ids:result.value.user_id, head:"bla"});
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
+      if(data.error_msg){
+		  alert(data.error_msg);
+		  return;
+	  }
       // // making userinfo object
       const userInfo = reactive({
         username: data[0].first_name,
