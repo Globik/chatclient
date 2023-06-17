@@ -12,7 +12,7 @@ import TheCountries from "./TheCountries.vue";
 import { useSearchPartner } from "../stores/searchPartner";
 import { useChatStore } from "../stores/chat";
 import { useUserStore } from "../stores/user";
-import { state, findNewRoom, stopRoom, getDevice } from "../socket";
+import { state, findNewRoom, stopRoom, getDevice, toggleCamera } from "../socket";
 import TheEmojiPicker from "./TheEmojiPicker.vue";
 import Cookies from "js-cookie";
 import { socket } from "../socket";

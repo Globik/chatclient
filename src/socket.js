@@ -166,8 +166,8 @@ if(!t){
 };
 
 
-async function toggleCamera(){
-	
+export const  toggleCamera=async()=>{
+
 toast.error("trying enable back cam")
 	if(!state.videoInput2) {
 		toast.error("Не работает!");
