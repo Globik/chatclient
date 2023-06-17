@@ -97,13 +97,13 @@ console.log(result.value)
 	 });
  };
  user = await getUserData('users.get', { user_ids: result.value.user_id, v: "5.131", access_token: result.value.access_token });
-      const data = await user.data;
+      const data = user;
 
       console.log('ANY VK DATA ', data);
-      if(data.error){
+     // if(data.error){
 		 // alert(data.error.error_msg);
-		  return;
-	  }
+		//  return;
+	 // }
       // // making userinfo object
       const userInfo = reactive({
         username: data[0].first_name,
