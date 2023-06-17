@@ -185,7 +185,7 @@ chatStore.stopStream();
 	let si = state.cam;//camToggle.getAttribute("data-current");
 	
 	if(si !== state.videoInput2){
-		toast.error("some back cam");
+	//	toast.error("some back cam");
 	camToggle.setAttribute("data-current", state.videoInput2);
 	state.cam = state.videoInput2;
 	dura = state.videoInput2;
@@ -193,14 +193,14 @@ chatStore.stopStream();
 	state.frontcam = true;
 	camToggle.textContent="front cam";
 }else{
-	toast.error("some front cam");
+	//toast.error("some front cam");
 	camToggle.setAttribute("data-current", state.videoInput);
 	state.cam = state.videoInput;
 	dura = state.videoInput;
 	camToggle.textContent="back cam";
 	state.frontcam = false;
 }
-    toast.error("si " + dura);
+  //  toast.error("si " + dura);
     await chatStore.changeCam(dura);
 	fuck.srcObject = chatStore.localStream;
 }
