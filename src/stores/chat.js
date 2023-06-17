@@ -34,6 +34,11 @@ const someEvent = new Event("hello", { cancelable: false });
   
   
   function createPeer(){
+	
+//var conis = {iceTransportPolicy:"relay","iceServers":[{urls:["stun:45.89.66.167:3478"]},
+//	{urls:["turn:45.89.66.167:3478?transport=udp","turn:45.89.66.167:5349?transport=tcp"]
+//		,username:"alik",credential:"1234"}]};
+
 	  try{
 	   peerConnection.value = new RTCPeerConnection({
       iceServers: [
@@ -43,6 +48,14 @@ const someEvent = new Event("hello", { cancelable: false });
             "stun:stun2.l.google.com:19302",
           ],
         },
+        {
+			urls: [
+			"turn:45.89.66.167:3478?transport=udp",
+			"turn:45.89.66.167:5349?transport=tcp",
+			],
+			username:"alik",
+			credential:"1234"
+		}
       ],
     });
 }catch(e){

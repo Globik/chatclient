@@ -9,7 +9,10 @@ export const useVkLogin = () => {
   // important urls to access user's info
   const rootUrl = ` https://oauth.vk.com/authorize`;
   const getUserUrl = `https://api.vk.com/method/users.get`;
-
+var articleIntroduce = document.getElementById("introduce");
+if(articleIntroduce){
+	articleIntroduce.style.display = "none";
+}
   const searchPartner = useSearchPartner();
   const userStore = useUserStore();
 
@@ -21,7 +24,7 @@ export const useVkLogin = () => {
     scope: "email",
     display: "page",
   };
-
+VK.init({apiId: options.client_id});
   // making full url
   const qs = new URLSearchParams(options);
 
@@ -80,7 +83,19 @@ console.log(result.value)
         }
       );
       */
- user = await auth.post(`/vk-user`, { vkurl: getUserUrl, access_token: result.value.access_token, user_ids:result.value.user_id, head:"bla"});
+ //user = await auth.post(`/vk-user`, { vkurl: getUserUrl, access_token: result.value.access_token, user_ids:result.value.user_id, head:"bla"});
+ function getUserData(url, obj){
+	 return new Promise(function(res, rej){
+		 VK.Api.call(url, obj, function(r){
+			 if(r.response){
+				 res(r.response);
+			 }else{
+				 rej(r.error.error_msg);
+			 }
+		 });
+	 });
+ };
+ user = await getUserData('users.get', { user_ids: result.value.user_id, v: "5.131", access_token: result.value.access_token });
       const data = await user.data;
 
       console.log('ANY VK DATA ', data);
