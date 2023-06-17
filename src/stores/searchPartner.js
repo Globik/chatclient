@@ -9,6 +9,7 @@ export const useSearchPartner = defineStore("searchPartner", () => {
   const gender = ref(Cookies.get("gender") || "male");
   const showCountrySearch = ref(false);
   const loading = ref(false);
+  var count= "";//ref("");
 
   const toggleCountrySearch = (v) => {
     showCountrySearch.value = v;
@@ -35,7 +36,18 @@ export const useSearchPartner = defineStore("searchPartner", () => {
       Cookies.set("country", c);
     }
   };
-
+const setCountries = (v)=>{
+	
+	count = v.join();
+	//alert(countries);
+	if (Cookies.get("countries")) {
+      Cookies.remove("countries");
+      Cookies.set("countries", v);
+    } else {
+      Cookies.set("countries", v);
+    }
+    
+};
   const getCountryIndexAndSet = (alpha) => {
     const foundIndex = countries.findIndex((i) => i.alpha1 === alpha);
 
@@ -72,6 +84,8 @@ export const useSearchPartner = defineStore("searchPartner", () => {
   };
 
   return {
+	 setCountries,
+	 count: count,
     country,
     gender,
     setCountry,

@@ -39,8 +39,10 @@ const toggleReport = () => {
 const toggleSound = () => {
   if (!isMute.value) {
     volume.value = 0;
+    REMOTE.muted = true;
   } else {
     volume.value = 100;
+    REMOTE.muted = false;
   }
   isMute.value = !isMute.value;
 };
@@ -59,6 +61,7 @@ const findRoomArgs = reactive({
   userId: Cookies.get("user")
     ? JSON.parse(Cookies.get("user")).details.userId
     : "",
+    countries:searchPartnerStore.count,//Cookies.get("countries"),
 });
 
 const sendMessage = async () => {
@@ -197,7 +200,7 @@ onMounted(async () => {
         <button 
         @click="toggleCamera()"
         id="camToggle" 
-        disabled>back cam</button>
+        disabled>{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
       </div>
 
       <form

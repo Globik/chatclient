@@ -131,7 +131,7 @@ export const stopRoom = async function(el){
  
 export const findNewRoom = async (data) => {
 	console.log("start");
-	
+	//alert(JSON.stringify(data));
 	if(!state.connected) socket.connect();
 	 const chatStore = useChatStore();
   try {
@@ -145,7 +145,7 @@ export const findNewRoom = async (data) => {
    //camToggle
     fuck.onloadedmetadata = function () {
 
-	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
+	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country, countries:data.countries});
 	  state.loading = true;
     state.searching = true;
     btnStop.disabled = false;
@@ -167,7 +167,7 @@ if(!t){
   }
 };
 
-
+//export const toggleSound = ()=>{}
 export const  toggleCamera=async()=>{
 
 toast.error("trying enable back cam")
