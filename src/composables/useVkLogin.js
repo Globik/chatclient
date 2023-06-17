@@ -87,6 +87,7 @@ console.log(result.value)
  function getUserData(url, obj){
 	 return new Promise(function(res, rej){
 		 VK.Api.call(url, obj, function(r){
+			 console.warn(r);
 			 if(r.response){
 				 res(r.response);
 			 }else{
