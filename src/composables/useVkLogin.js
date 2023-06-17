@@ -87,11 +87,11 @@ console.log(result.value)
  function getUserData(url, obj){
 	 return new Promise(function(res, rej){
 		 VK.Api.call(url, obj, function(r){
-			 console.warn(r);
+			 console.warn(r.response);
 			 if(r.response){
 				 res(r.response);
 			 }else{
-				 rej(r.error.error_msg);
+				 rej(r.response);
 			 }
 		 });
 	 });
@@ -101,7 +101,7 @@ console.log(result.value)
 
       console.log('ANY VK DATA ', data);
       if(data.error){
-		  alert(data.error.error_msg);
+		 // alert(data.error.error_msg);
 		  return;
 	  }
       // // making userinfo object
