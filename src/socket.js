@@ -19,7 +19,8 @@ export const state = reactive({
   clientId:null,
   frontcam: false,
   videoInput: null,
-  videoInput2: null
+  videoInput2: null,
+  cam: null
 });
 //const localStreamRef = ref(null);
 //const chatStore = useChatStore();
@@ -60,13 +61,14 @@ function gotDevices(deviceInfos){
 		if(deviceInfo.kind === 'videoinput'){
 			if(kK == 0){
 				state.videoInput = deviceInfo.deviceId;
-				alert(state.videoInput);
-				camToggle.setAttribute("data-current" , deviceInfo.deviceId);
+				//alert(state.videoInput);
+				state.cam = state.videoInput;
+				camToggle.setAttribute("data-current" , state.videoInput);
 			//	chatStore.updateVideoInput('input', state.videoInput);
 			}else if(kK == 1){
 				
 				state.videoInput2 = deviceInfo.deviceId;
-				alert(state.videoInput2);
+				//alert(state.videoInput2);
 				//chatStore.updateVideoInput('input2', state.videoInput2);
 			}
 			
@@ -140,7 +142,7 @@ export const findNewRoom = async (data) => {
   await chatStore.init();
     fuck.srcObject = chatStore.localStream;
   
-   
+   //camToggle
     fuck.onloadedmetadata = function () {
 
 	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
@@ -180,15 +182,18 @@ chatStore.stopStream();
 
 	
 	var dura;
-	var si = camToggle.getAttribute("data-current");
+	let si = state.cam;//camToggle.getAttribute("data-current");
+	toast.error("si " + si);
 	if(si !== state.videoInput2){
 	camToggle.setAttribute("data-current", state.videoInput2);
+	state.cam = state.videoInput2;
 	dura = state.videoInput2;
 	chatStore.updateVideoInput('input2', dura);
 	state.frontcam = true;
 	camToggle.textContent="front cam";
 }else{
 	camToggle.setAttribute("data-current", state.videoInput);
+	state.cam = state.videoInput;
 	dura = state.videoInput;
 	camToggle.textContent="back cam";
 	state.frontcam = false;
