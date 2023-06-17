@@ -45,10 +45,12 @@ const someEvent = new Event("hello", { cancelable: false });
   };
   
   async function changeCam(cam){
+	  
 	  let constraints={audio:{
       echoCancellation: {exact: true}
     }, video:{deviceId: cam ? {exact: cam} : undefined}}
     try{
+		alert("cam " + cam);
 	let stream = await navigator.mediaDevices.getUserMedia(constraints);
 	//localVideo.srcObject = stream;
 	localStream.value = stream;	
@@ -56,7 +58,7 @@ const someEvent = new Event("hello", { cancelable: false });
 	
 	
 	if(!peerConnection.value) {
-		
+		alert("no peerConnection");
 		return;
 	}
 	 let videoTrack = stream.getVideoTracks()[0];

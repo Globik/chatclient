@@ -18,8 +18,8 @@ export const state = reactive({
   target: null,
   clientId:null,
   frontcam: false,
-  videoInput: undefined,
-  videoInput2: undefined
+  videoInput: null,
+  videoInput2: null
 });
 //const localStreamRef = ref(null);
 //const chatStore = useChatStore();
@@ -60,10 +60,13 @@ function gotDevices(deviceInfos){
 		if(deviceInfo.kind === 'videoinput'){
 			if(kK == 0){
 				state.videoInput = deviceInfo.deviceId;
+				alert(state.videoInput);
 				camToggle.setAttribute("data-current" , deviceInfo.deviceId);
 			//	chatStore.updateVideoInput('input', state.videoInput);
 			}else if(kK == 1){
+				
 				state.videoInput2 = deviceInfo.deviceId;
+				alert(state.videoInput2);
 				//chatStore.updateVideoInput('input2', state.videoInput2);
 			}
 			
@@ -165,7 +168,7 @@ if(!t){
 
 async function toggleCamera(){
 	
-
+toast.error("trying enable back cam")
 	if(!state.videoInput2) {
 		toast.error("Не работает!");
 		return;
