@@ -171,10 +171,10 @@ if(!t){
 export const  toggleCamera=async()=>{
 
 toast.error("trying enable back cam")
-	if(!state.videoInput2) {
-		toast.error("Не работает!");
-		return;
-	}
+	//if(!state.videoInput2) {
+		//toast.error("Не работает!");
+		//return;
+	//}
 	
 const chatStore = useChatStore();
 chatStore.stopStream();
@@ -185,6 +185,7 @@ chatStore.stopStream();
 	let si = state.cam;//camToggle.getAttribute("data-current");
 	
 	if(si !== state.videoInput2){
+		toast.error("some back cam");
 	camToggle.setAttribute("data-current", state.videoInput2);
 	state.cam = state.videoInput2;
 	dura = state.videoInput2;
@@ -192,6 +193,7 @@ chatStore.stopStream();
 	state.frontcam = true;
 	camToggle.textContent="front cam";
 }else{
+	toast.error("some front cam");
 	camToggle.setAttribute("data-current", state.videoInput);
 	state.cam = state.videoInput;
 	dura = state.videoInput;
