@@ -12,7 +12,7 @@ import TheCountries from "./TheCountries.vue";
 import { useSearchPartner } from "../stores/searchPartner";
 import { useChatStore } from "../stores/chat";
 import { useUserStore } from "../stores/user";
-import { state, findNewRoom, stopRoom } from "../socket";
+import { state, findNewRoom, stopRoom, getDevice } from "../socket";
 import TheEmojiPicker from "./TheEmojiPicker.vue";
 import Cookies from "js-cookie";
 import { socket } from "../socket";
@@ -82,9 +82,10 @@ onMounted(async () => {
   try{
   fuck.srcObject = null;
   // await chatStore.init();
- //   const chatStore = useChatStore();
+ // const chatStore = useChatStore();
   //remoteStreamRef.value.srcObject = chatStore.remoteStream;
     //alert("onmounted")
+    getDevice();
     }catch(e){
     alert(e)
     }
@@ -95,6 +96,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="wrapper">
+  <div>Users online: <span id="userCount">0</span></div>
     <div class="top-0 grid w-full grid-cols-2 screens">
       <div
         class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-gray-600"
@@ -161,6 +163,7 @@ onMounted(async () => {
           {{ state.inRoom ? "Далее" : "Старт" }}
         </button>
         <button
+        id="btnStop"
         @click="stopRoom()"
         :disabled="
             !state.inRoom
@@ -191,6 +194,10 @@ onMounted(async () => {
         >
           Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
         </button>
+        <button 
+        @click="toggleCamera()"
+        id="camToggle" 
+        disabled>back cam</button>
       </div>
 
       <form

@@ -2,13 +2,16 @@ import { defineStore } from "pinia";
 import { reactive, ref, computed } from "vue";
 import { socket, state } from "../socket";
 
+
 export const useChatStore = defineStore("chat-store", () => {
   const peerConnection = ref(null);
   const localStream = ref(null);
-  const stream=null;
+  var stream=null;
   const remoteStream = ref(null);
   const messages = reactive([]);
   var roomId="1";
+  const videoInput = reactive({input: undefined, input2:undefined});
+
   const roomDetails = reactive({
     id: "",
     connected: false,
@@ -16,21 +19,59 @@ export const useChatStore = defineStore("chat-store", () => {
   });
 const someEvent = new Event("hello", { cancelable: false });
   const init = async () => {
-	 // alert('init');
+		let constraints = {
+		audio:{
+      echoCancellation: true,
+      autoGainControl: true,
+      noiseSuppression: true,
+      channelCount: 1,
+      sampleRate:48000,
+      sampleSize: 16
+    }, 
+	video: {deviceId: videoInput.input ? {exact: videoInput.input} : undefined}
+		};
+		
+	//	let constraints = { audio: true, video: true };
 	 
 	  try{
 		 
-   localStream.value = await navigator.mediaDevices.getUserMedia({
-      video:true,
-      audio: true
-    });
+   localStream.value = await navigator.mediaDevices.getUserMedia(constraints);
+    
+  //  window.streami = localStream.value;
     
 }catch(e){console.log("hier "+e);}
 
 
   };
   
-  
+  async function changeCam(cam){
+	  let constraints={audio:{
+      echoCancellation: {exact: true}
+    }, video:{deviceId: cam ? {exact: cam} : undefined}}
+    try{
+	let stream = await navigator.mediaDevices.getUserMedia(constraints);
+	//localVideo.srcObject = stream;
+	localStream.value = stream;	
+	//window.streami = stream;
+	
+	
+	if(!peerConnection.value) {
+		
+		return;
+	}
+	 let videoTrack = stream.getVideoTracks()[0];
+	   var sender = peerConnection.value.getSenders().find(function(s) {
+        return s.track.kind == videoTrack.kind;
+      });
+      
+     await sender.replaceTrack(videoTrack);
+	 
+	 
+	}catch(err){
+		alert(err);
+	}
+
+  }
   
   
   function createPeer(){
@@ -221,8 +262,12 @@ const createOffer = async(target, from)=>{
 
     return roomDetails;
   };
-  
+  const updateVideoInput = (key, value)=>{
+	  viedeoInput[key] = value;
+	  return videoInput;
+  }
  function handleLeave(from){
+	 if(!roomDetails.id)return;
 	if(from)socket.emit("leaveRoom", { to: from,  membersId: roomDetails.partner, roomId: roomDetails.id });
 	if(!peerConnection.value) return;
 	 if(REMOTE.srcObject){
@@ -251,7 +296,13 @@ const createOffer = async(target, from)=>{
 }
   const disconnect = async (userId) => {};
   //localStream.value.on
- 
+ const stopStream = ()=>{
+	 if(localStream.value){
+		localStream.value.getTracks().forEach(function(track){
+			track.stop();
+		});
+ }
+}
   return {
     init,
     localStream,
@@ -268,6 +319,9 @@ const createOffer = async(target, from)=>{
     roomDetails,
     updateRoom,
     handleLeave,
+    stopStream,
+    updateVideoInput,
+    changeCam,
   };
 
 

@@ -6,6 +6,8 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 var t;
+
+
 export const state = reactive({
   connected: false,
   fooEvents: [],
@@ -14,7 +16,10 @@ export const state = reactive({
   searching: false,
   loading: false,
   target: null,
-  clientId:null
+  clientId:null,
+  frontcam: false,
+  videoInput: undefined,
+  videoInput2: undefined
 });
 //const localStreamRef = ref(null);
 //const chatStore = useChatStore();
@@ -40,29 +45,55 @@ socket.on("disconnect", () => {
 });
 
 const onInterval = function(data) {
-	console.warn("interval");
+	
 	 if(state.target) return;
-	 //alert(state.target);
-//console.warn(data)
+	 
 	if(!state.target) socket.emit("findRoom", data);
 	  }
+var kK = 0;
+function gotDevices(deviceInfos){
+	let a = navigator.mediaDevices.getSupportedConstraints();
+	const chatStore = useChatStore();
+	for(var i=0; i !== deviceInfos.length; ++i){
+		
+		const deviceInfo = deviceInfos[i];
+		if(deviceInfo.kind === 'videoinput'){
+			if(kK == 0){
+				state.videoInput = deviceInfo.deviceId;
+				camToggle.setAttribute("data-current" , deviceInfo.deviceId);
+			//	chatStore.updateVideoInput('input', state.videoInput);
+			}else if(kK == 1){
+				state.videoInput2 = deviceInfo.deviceId;
+				//chatStore.updateVideoInput('input2', state.videoInput2);
+			}
+			
+			kK++;
+		}
+	}
+}
+export const getDevice = ()=>{
+if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
 
-
+}else{
+navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(function(err){console.error(err)});
+}
+}
  const onHello = async function(event) { 
-	 //  alert("hello");
-	   console.error("hello");
 	  state.loading = false;
     state.searching = false;
     state.inRoom = true;
     const chatStore = useChatStore();
      let roomDet = await chatStore.updateRoom("connected", true);
      console.log("roomDetails: ", roomDet);
+     if(state.videoInput2){
+		 camToggle.disabled = false;
+	 }
 	 }
 
 export const stopRoom = async function(el){
 
 	 if(t){
-		// alert("clearInterval");
+		
 		 clearInterval(t);
 		 t = undefined;
 		 }
@@ -87,7 +118,8 @@ export const stopRoom = async function(el){
     await chatStore.updateRoom("partner", "");
    if(state.connected) socket.close();
     
-    
+    btnStop.disabled = true;
+    camToggle.disabled = true;
  };
 
  //const someEvent = new Event("hello");
@@ -108,15 +140,18 @@ export const findNewRoom = async (data) => {
    
     fuck.onloadedmetadata = function () {
 
-	 socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
+	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country });
 	  state.loading = true;
     state.searching = true;
+    btnStop.disabled = false;
 console.log("here data: ",data);
 if(!t){
    t = setInterval(onInterval, 5000, data);
 	}
+	if(state.videoInput2)camToggle.disabled = false;
 }
 }else{
+	camToggle.disabled = true;
 			chatStore.leavePeer(state.clientId);
 }
 }catch (error) {
@@ -126,6 +161,40 @@ if(!t){
    // state.searching = false;
   }
 };
+
+
+async function toggleCamera(){
+	
+
+	if(!state.videoInput2) {
+		toast.error("Не работает!");
+		return;
+	}
+	
+const chatStore = useChatStore();
+chatStore.stopStream();
+	fuck.srcObject = null;
+
+	
+	var dura;
+	var si = camToggle.getAttribute("data-current");
+	if(si !== state.videoInput2){
+	camToggle.setAttribute("data-current", state.videoInput2);
+	dura = state.videoInput2;
+	chatStore.updateVideoInput('input2', dura);
+	state.frontcam = true;
+	camToggle.textContent="front cam";
+}else{
+	camToggle.setAttribute("data-current", state.videoInput);
+	dura = state.videoInput;
+	camToggle.textContent="back cam";
+	state.frontcam = false;
+}
+    await chatStore.changeCam(dura);
+	fuck.srcObject = chatStore.localStream;
+}
+
+
 
 socket.on( 'onLeaveRoom', async (data) => {
 	console.warn("*** on leave room ***");
@@ -167,6 +236,9 @@ console.log("ROOM FOUNDED!: ", JSON.stringify(data));
     toast.error(error.message);
   }
 });
+socket.on('usercount', (data)=>{
+	userCount.textContent = data.count;
+})
 socket.on("makeOffer", async (data) => {
 	console.log("makeOffer!!: ", JSON.stringify(data));
     state.target = data.to;
