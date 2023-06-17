@@ -189,7 +189,7 @@ chatStore.stopStream();
 	camToggle.setAttribute("data-current", state.videoInput2);
 	state.cam = state.videoInput2;
 	dura = state.videoInput2;
-	chatStore.updateVideoInput('input2', dura);
+	//chatStore.updateVideoInput('input2', dura);
 	state.frontcam = true;
 	camToggle.textContent="front cam";
 }else{
