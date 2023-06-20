@@ -9,7 +9,7 @@ export const useSearchPartner = defineStore("searchPartner", () => {
   const gender = ref(Cookies.get("gender") || "male");
   const showCountrySearch = ref(false);
   const loading = ref(false);
-  var count= "";//ref("");
+  var counta = ref(['all']);//ref(JSON.parse(Cookies.get("countries").c) || []);
 
   const toggleCountrySearch = (v) => {
     showCountrySearch.value = v;
@@ -37,14 +37,17 @@ export const useSearchPartner = defineStore("searchPartner", () => {
     }
   };
 const setCountries = (v)=>{
+	v.forEach(function(el, i){
+	counta.value[i] = el;	
+	});
 	
-	count = v.join();
-	//alert(countries);
+	
+	console.log('countries: ', v[0] );
 	if (Cookies.get("countries")) {
       Cookies.remove("countries");
-      Cookies.set("countries", v);
+      Cookies.set("countries", JSON.stringify({c: v}));
     } else {
-      Cookies.set("countries", v);
+      Cookies.set("countries", JSON.stringify({c: v}));
     }
     
 };
@@ -85,7 +88,7 @@ const setCountries = (v)=>{
 
   return {
 	 setCountries,
-	 count: count,
+	 counta,
     country,
     gender,
     setCountry,

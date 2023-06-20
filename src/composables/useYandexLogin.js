@@ -5,6 +5,10 @@ import { useUserStore } from "../stores/user";
 import axios from "axios";
 
 export const useYandexLogin = () => {
+	var articleIntroduce = document.getElementById("introduce");
+if(articleIntroduce){
+	articleIntroduce.style.display = "none";
+}
   // important urls to access user's info
   const tokenUrl = `https://oauth.yandex.com/authorize?response_type=token&client_id=${
     import.meta.env.VITE_YANDEX_ID
@@ -20,11 +24,11 @@ export const useYandexLogin = () => {
       await searchPartner.setLoading(true);
 
       const openedWindow = window.open(
-        tokenUrl,
+        '',
         "targetWindow",
         `toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize`
       );
-
+		openedWindow.location = tokenUrl;
       let timer = setInterval(() => {
         if (openedWindow.closed) {
           window.location.reload();
@@ -32,10 +36,11 @@ export const useYandexLogin = () => {
         } else {
           return;
         }
-      }, 700);
+      }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
+      alert(error);
     }
   };
 
@@ -95,19 +100,19 @@ console.log('yandex-oauth', response.data)
     
      setTimeout(function(){
 		 window.close();
-	  }, 100);
+	  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
       alert(error);
       setTimeout(function(){
 		 window.close();
-	  }, 3000);
+	  }, 1);
     } finally {
       await searchPartner.setLoading(false);
       setTimeout(function(){
-		// window.close();
-	  }, 3000);
+		window.close();
+	  }, 1);
     }
   };
 

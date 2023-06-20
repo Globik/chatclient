@@ -6,6 +6,10 @@ import axios from "axios";
 
 export const useGoogleLogin = () => {
   // important urls to access user's info
+  var articleIntroduce = document.getElementById("introduce");
+if(articleIntroduce){
+	articleIntroduce.style.display = "none";
+}
   const rootUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
   const getUserUrl = `https://www.googleapis.com/oauth2/v3/userinfo?access_token=`;
 
@@ -35,13 +39,13 @@ export const useGoogleLogin = () => {
   const googleLogin = async () => {
     try {
       await searchPartner.setLoading(true);
-
+// if(navigator.platform.indexOf('Mac') > -1 && navigator.userAgent.indexOf('Safari')>-1 && navigator.userAgent.indexOf('Chrome') < 0
       const openedWindow = window.open(
-        fullUrl.value,
+        '',
         "targetWindow",
         `toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=500,height=SomeSize`
       );
-
+  openedWindow.location = fullUrl.value;
       let timer = setInterval(() => {
         if (openedWindow.closed) {
           window.location.reload();
@@ -49,10 +53,11 @@ export const useGoogleLogin = () => {
         } else {
           return;
         }
-      }, 700);
+      }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
+      alert(error);
     }
   };
 
@@ -112,14 +117,14 @@ export const useGoogleLogin = () => {
       await searchPartner.setLoading(false);
       setTimeout(function(){
 		  window.close();
-	  }, 1000);
+	  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
       alert(error);
        setTimeout(function(){
 		  window.close();
-	  }, 3000);
+	  }, 1);
     } 
   };
 

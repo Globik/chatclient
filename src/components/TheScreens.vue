@@ -58,12 +58,12 @@ const mama=1;
 const findRoomArgs = reactive({
   gender: searchPartnerStore.gender,
   country: +searchPartnerStore.countryIndex,
-  userId: Cookies.get("user")
-    ? JSON.parse(Cookies.get("user")).details.userId
-    : "",
-    countries:searchPartnerStore.count,//Cookies.get("countries"),
+  userId: Cookies.get("user") 
+  ? JSON.parse(Cookies.get("user")).details.userId 
+  : "",
+  countries:searchPartnerStore.counta,//JSON.parse(Cookies.get("countries")).c,
 });
-
+console.log("screen ", searchPartnerStore.counta)
 const sendMessage = async () => {
   console.log(`Message: `, message.value);
   console.log(`Room: `, chatStore.roomDetails.connected);

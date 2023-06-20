@@ -6,7 +6,9 @@ const searchPartner = useSearchPartner();
 const { getUserData } = useVkLogin();
 
 onMounted(async () => {
+try{
   await getUserData();
+  }catch(e){alert(e);}
 });
 </script>
 

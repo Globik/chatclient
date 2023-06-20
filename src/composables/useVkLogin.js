@@ -38,11 +38,11 @@ VK.init({apiId: options.client_id});
       await searchPartner.setLoading(true);
 
       const openedWindow = window.open(
-        fullUrl.value,
+        '',
         "targetWindow",
         `toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=SomeSize,height=SomeSize`
       );
-
+		openedWindow.location = fullUrl.value;
       let timer = setInterval(() => {
         if (openedWindow.closed) {
           window.location.reload();
@@ -50,10 +50,11 @@ VK.init({apiId: options.client_id});
         } else {
           return;
         }
-      }, 700);
+      }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
+      alert(error);
     }
   };
 
@@ -84,7 +85,7 @@ console.log(result.value)
       );
       */
  //user = await auth.post(`/vk-user`, { vkurl: getUserUrl, access_token: result.value.access_token, user_ids:result.value.user_id, head:"bla"});
- function getUserData(url, obj){
+ function getUserData2(url, obj){
 	 return new Promise(function(res, rej){
 		 VK.Api.call(url, obj, function(r){
 			 console.warn(r.response);
@@ -96,7 +97,7 @@ console.log(result.value)
 		 });
 	 });
  };
- user = await getUserData('users.get', { user_ids: result.value.user_id, v: "5.131", access_token: result.value.access_token });
+ user = await getUserData2('users.get', { user_ids: result.value.user_id, v: "5.131", access_token: result.value.access_token });
       const data = user;
 
       console.log('ANY VK DATA ', data);
@@ -133,14 +134,14 @@ console.log(result.value)
     
      setTimeout(function(){
 		  window.close();
-	  }, 100);
+	  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
       alert(error);
        setTimeout(function(){
 		 window.close();
-	  }, 3000);
+	  }, 1);
     }
   };
 

@@ -8,7 +8,9 @@ const searchPartner = useSearchPartner();
 const { getUserData } = useGoogleLogin();
 
 onMounted(async () => {
+try{
   await getUserData();
+  }catch(e){alert(e);}
 });     
 </script>
 

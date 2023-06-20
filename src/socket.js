@@ -78,7 +78,7 @@ function gotDevices(deviceInfos){
 }
 export const getDevice = ()=>{
 if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
-
+alert("your browser navigator.mediaDevices not supported")
 }else{
 navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(function(err){console.error(err)});
 }
@@ -149,7 +149,7 @@ export const findNewRoom = async (data) => {
 	  state.loading = true;
     state.searching = true;
     btnStop.disabled = false;
-console.log("here data: ",data);
+console.log("here data: ", JSON.stringify(data));
 if(!t){
    t = setInterval(onInterval, 5000, data);
 	}

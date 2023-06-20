@@ -44,7 +44,7 @@ function checki(){
 }
 function checkLand(){
 
-	if(checkedLands.value.length==5){
+	if(checkedLands.value.length >= 5){
 	searchPartner.toggleCountrySearch(false);
 		return;
 	}
