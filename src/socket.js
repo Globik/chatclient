@@ -161,6 +161,7 @@ if(!t){
 }
 }catch (error) {
     console.log(error);
+    alert(error);
     toast.error(error.message);
    // state.loading = false;
    // state.searching = false;

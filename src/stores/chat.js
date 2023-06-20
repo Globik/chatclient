@@ -19,7 +19,7 @@ export const useChatStore = defineStore("chat-store", () => {
   });
 const someEvent = new Event("hello", { cancelable: false });
   const init = async () => {
-		let constraints = {
+		let constraintsa = {
 		audio:{
       echoCancellation: true,
       autoGainControl: true,
@@ -31,15 +31,17 @@ const someEvent = new Event("hello", { cancelable: false });
 	video: {deviceId: videoInput.input ? {exact: videoInput.input} : undefined}
 		};
 		
-	//	let constraints = { audio: true, video: true };
+		let constraints = { audio: true, video: true };
 	 
 	  try{
 		 
    localStream.value = await navigator.mediaDevices.getUserMedia(constraints);
-    
+    document.body.click();
+   // document.body.touch();
+    fuck.play();
   //  window.streami = localStream.value;
     
-}catch(e){console.log("hier "+e);}
+}catch(e){alert(e);console.log("hier "+e);}
 
 
   };
