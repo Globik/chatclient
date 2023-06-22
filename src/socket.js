@@ -2,6 +2,7 @@ import { reactive, ref } from "vue";
 import { io } from "socket.io-client";
 import Cookies from "js-cookie";
 import { useChatStore } from "./stores/chat";
+import { useUserStore } from "./stores/user"
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
@@ -131,7 +132,9 @@ export const stopRoom = async function(el){
  
 export const findNewRoom = async (data) => {
 	console.log("start");
-	//alert(JSON.stringify(data));
+	const us=useUserStore();
+	
+	//alert(JSON.stringify(us));
 	if(!state.connected) socket.connect();
 	 const chatStore = useChatStore();
   try {
@@ -143,8 +146,27 @@ export const findNewRoom = async (data) => {
     fuck.srcObject = chatStore.localStream;
   
    //camToggle
-    fuck.onloadedmetadata = function () {
-
+    fuck.onloadedmetadata = function (ev) {
+   var tru=ev.target.addTextTrack("captions", "Titles", "ru");
+   tru.mode="showing";
+   let cue=new VTTCue(0.0,100090.9, us.user.details.details.firstname);
+   cue.snapToLines=false;
+   cue.lineAlign='center';
+   //cue.vertical="rl"
+  cue.positionAlign='center';
+  cue.position=10;
+   cue.size="100";
+  cue.line=2;
+  
+   cue.align="start";// start end 
+  /* const region=new VTTRegion();
+   region.width=50;
+   region.lines=4;
+   region.viewportAnchorX=25;
+   cue.region=region;
+   */ 
+   console.log(cue.getCueAsHTML());
+   tru.addCue(cue);
 	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country, countries:data.countries});
 	  state.loading = true;
     state.searching = true;

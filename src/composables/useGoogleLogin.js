@@ -45,7 +45,7 @@ if(articleIntroduce){
         "targetWindow",
         `toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=500,height=SomeSize`
       );
-  openedWindow.location = fullUrl.value;
+  openedWindow.location.href = fullUrl.value;
       let timer = setInterval(() => {
         if (openedWindow.closed) {
           window.location.reload();

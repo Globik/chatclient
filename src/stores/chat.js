@@ -38,10 +38,10 @@ const someEvent = new Event("hello", { cancelable: false });
    localStream.value = await navigator.mediaDevices.getUserMedia(constraints);
     document.body.click();
    // document.body.touch();
-    fuck.play();
+    //fuck.play();
   //  window.streami = localStream.value;
     
-}catch(e){alert(e);console.log("hier "+e);}
+}catch(e){alert(e.name);console.log("hier "+e);}
 
 
   };
@@ -212,7 +212,7 @@ const createOffer = async(target, from)=>{
 	roomDetails.partner = target;
 	createPeer();
 	
-	peerConnection.value.createOffer().then(function(offer){
+	peerConnection.value.createOffer({ offerToReceiveAudio: 1, offerToReceiveVideo: 1 }).then(function(offer){
 		return peerConnection.value.setLocalDescription(offer);
 	}).then(function(){
 	console.log(" *** SENDING OFFER ***");

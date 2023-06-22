@@ -238,6 +238,27 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+#fuck::cue{
+	background-image: linear-gradient(to bottom, dimgray, lightgray);
+	color: darkblue;
+	line-height:1.5;
+	font-weight:bold;
+position:relative;
+}
+#fuck::cue::after{
+	content:"fuck";
+	positoon:absolute;
+}
+#fuck::cue(b){
+	color:orange;
+}
+#fuck::region{
+	color:brown;
+}
+#fuck::cue(.foreignphrase){
+	color:blue;
+}
+
 #undervideocontainer{
 	margin-top:5px;
 }
