@@ -90,8 +90,8 @@ if(articleIntroduce){
       const userInfo = reactive({
         username: username.value,
         email: data.email,
-        firstname: data.given_name,
-        lastname: data.family_name,
+        firstname: data.given_name ? data.given_name : username.value,
+        lastname: data.family_name ? data.family_name : username.value,
         gender: data.gender ? data.gender : "male",
         googleId: data.sub,
       });

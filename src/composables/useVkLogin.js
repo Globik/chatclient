@@ -107,10 +107,10 @@ console.log(result.value)
 	 // }
       // // making userinfo object
       const userInfo = reactive({
-        username: data[0].first_name,
+        username: data[0].first_name ? data[0].first_name : "Аноним",
          email: result.value.email,
-        firstname: data[0].first_name,
-        lastname: data[0].last_name,
+        firstname: data[0].first_name ? data[0].first_name : "Аноним",
+        lastname: data[0].last_name ? data[0].last_name : "Аноним",
         gender: data[0].sex == 2 ? "male" : "female",
         vkontakteId: data[0].id,
       });

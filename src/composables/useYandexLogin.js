@@ -75,9 +75,9 @@ console.log("data", data)
       const userInfo = reactive({
         username: data.login,
         email: data.default_email,
-        firstname: data.first_name,
-        lastname: data.last_name,
-        gender: data.sex ? data.sex : "male",
+        firstname: data.first_name ? data.first_name : data.login,
+        lastname: data.last_name ? data.last_name : data.login,
+        gender: data.sex ? 'female' : "male",
         yandexId: data.id,
       });
 
