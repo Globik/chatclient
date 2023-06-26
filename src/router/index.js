@@ -35,6 +35,37 @@ const router = createRouter({
       name: "loading",
       component: () => import("../views/LoadingView.vue"),
     },
+    
+     {
+      path: "/register",
+      name: "register",
+      component: () => import("../views/RegisterView.vue"),
+    },
+    {
+      path: "/admin",
+      name: "homedashboard",
+      component: () => import("../views/HomeViewDashboard.vue"),
+    },
+    {
+      path: "/users",
+      name: "users",
+      component: () => import("../views/UsersView.vue"),
+    },
+    {
+      path: "/users/:id",
+      name: "user",
+      component: () => import("../views/UserView.vue"),
+    },
+     {
+      path: "/reports",
+      name: "reports",
+      component: () => import("../views/ReportsView.vue"),
+    },
+    {
+      path: "/chats",
+      name: "chats",
+      component: () => import("../views/chats.vue"),
+    },
   ],
 });
 

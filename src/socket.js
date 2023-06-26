@@ -7,10 +7,12 @@ import { useToast } from "vue-toastification";
 
 const toast = useToast();
 var t;
-
+var tru;
+var tru2;
 
 export const state = reactive({
   connected: false,
+  counts: 0,
   fooEvents: [],
   barEvents: [],
   inRoom: false,
@@ -21,11 +23,12 @@ export const state = reactive({
   frontcam: false,
   videoInput: null,
   videoInput2: null,
-  cam: null
+  cam: null, 
+  nick: null,
 });
-//const localStreamRef = ref(null);
+const remoteStreamRef = ref(null);
 //const chatStore = useChatStore();
-//const localStreamRef = ref(null);
+const localStreamRef = ref(null);
 const URL = import.meta.env.DEV? import.meta.env.VITE_SERVER_HOST_DEV : import.meta.env.VITE_SERVER_HOST_PROD;
  //alert(URL);
  //let ru=import.meta.env.VITE_SERVER_HOST_PROD
@@ -81,6 +84,8 @@ export const getDevice = ()=>{
 if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
 alert("your browser navigator.mediaDevices not supported")
 }else{
+	localStreamRef.value = fuck;
+	remoteStreamRef.value = REMOTE;
 navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(function(err){console.error(err)});
 }
 }
@@ -107,8 +112,8 @@ export const stopRoom = async function(el){
 	 const chatStore = useChatStore();
 	 
 			chatStore.leavePeer(state.clientId);
-			if(fuck.srcObject){
-		fuck.srcObject.getTracks().forEach(function(track){
+		if(localStreamRef.value.srcObject){
+		localStreamRef.value.srcObject.getTracks().forEach(function(track){
 			track.stop();
 		});
 		}
@@ -123,9 +128,12 @@ export const stopRoom = async function(el){
     await chatStore.updateRoom("id", "");
     await chatStore.updateRoom("partner", "");
    if(state.connected) socket.close();
-    
-    btnStop.disabled = true;
-    camToggle.disabled = true;
+    if(tru){tru.mode="hidden";}
+    if(tru2){tru2.mode="hidden";}
+    localStreamRef.value.onloadedmetadata = null;
+    remoteStreamRef.value.onloadedmetadata = null;
+  //  btnStop.disabled = true;
+  //  camToggle.disabled = true;
  };
 
  //const someEvent = new Event("hello");
@@ -147,7 +155,7 @@ export const findNewRoom = async (data) => {
   
    //camToggle
     fuck.onloadedmetadata = function (ev) {
-   var tru=ev.target.addTextTrack("captions", "Titles", "ru");
+    tru=ev.target.addTextTrack("captions", "Titles", "ru");
    tru.mode="showing";
    let cue=new VTTCue(0.0,100090.9, us.user.details.details.firstname);
    cue.snapToLines=false;
@@ -159,15 +167,10 @@ export const findNewRoom = async (data) => {
   cue.line=2;
   
    cue.align="start";// start end 
-  /* const region=new VTTRegion();
-   region.width=50;
-   region.lines=4;
-   region.viewportAnchorX=25;
-   cue.region=region;
-   */ 
+  
    console.log(cue.getCueAsHTML());
    tru.addCue(cue);
-	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country, countries:data.countries});
+	 if(!t)socket.emit("joinToQueue", { userId: data.userId, gender: data.gender, country: data.country, countries:data.countries, nick: data.nick});
 	  state.loading = true;
     state.searching = true;
     btnStop.disabled = false;
@@ -176,10 +179,39 @@ if(!t){
    t = setInterval(onInterval, 5000, data);
 	}
 	if(state.videoInput2)camToggle.disabled = false;
-}
+};
+
+
+REMOTE.onloadedmetadata = function (ev) {
+    tru2=ev.target.addTextTrack("captions", "Titles", "ru");
+   tru2.mode="showing";
+   let cue=new VTTCue(0.0,100090.9, state.nick);
+   cue.snapToLines=false;
+   cue.lineAlign='center';
+   //cue.vertical="rl"
+  cue.positionAlign='center';
+  cue.position=10;
+   cue.size="100";
+  cue.line=2;
+  
+   cue.align="start";// start end 
+  
+   console.log(cue.getCueAsHTML());
+   tru2.addCue(cue);
+};
+
+
+
+
+
+
+
 }else{
 	camToggle.disabled = true;
 			chatStore.leavePeer(state.clientId);
+			if(tru2){
+				tru2.mode="hidden";
+			}
 }
 }catch (error) {
     console.log(error);
@@ -238,7 +270,9 @@ socket.on( 'onLeaveRoom', async (data) => {
 	try {
     const chatStore = useChatStore();
     chatStore.handleLeave(false);
-    
+    if(tru2){
+				tru2.mode="hidden";
+			}
 }catch(e){
 	console.error(e);
 }
@@ -271,11 +305,13 @@ console.log("ROOM FOUNDED!: ", JSON.stringify(data));
   }
 });
 socket.on('usercount', (data)=>{
-	userCount.textContent = data.count;
+	if(document.getElementById('userCount'))userCount.textContent = data.count;
+	state.counts = data.count;
 })
 socket.on("makeOffer", async (data) => {
 	console.log("makeOffer!!: ", JSON.stringify(data));
     state.target = data.to;
+    state.nick = data.nick;
     
   try {
     const chatStore = useChatStore();
@@ -290,6 +326,7 @@ socket.on("makeOffer", async (data) => {
 socket.on("waitOffer", async (data) => {
 	console.log("waitOffer!: ", JSON.stringify(data));
     state.target = data.from;
+    state.nick = data.nick;
     const chatStore = useChatStore();
     await chatStore.updateRoom("connected", false);
     await chatStore.updateRoom("id", data.roomId);
@@ -338,10 +375,9 @@ socket.on("onException", (data) => {
   toast.error(data.message);
 });
 
-socket.on("onNewMessage", async (data) => {
+socket.on("onNewMessage1", async (data) => {
   const chatStore = useChatStore()
-
   await chatStore.pushMessage(data)
-
+//alert("message came")
   console.log(chatStore.messages);
 });

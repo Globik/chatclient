@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, onUnmounted, onBeforeUnmount } from "vue";
 import {
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
@@ -7,6 +7,9 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/vue/24/solid";
 import "/node_modules/flag-icons/css/flag-icons.min.css";
+import { useToast } from "vue-toastification";
+
+
 import { ref } from "vue";
 import TheCountries from "./TheCountries.vue";
 import { useSearchPartner } from "../stores/searchPartner";
@@ -20,12 +23,13 @@ import { socket } from "../socket";
 const chatStore = useChatStore();
 const searchPartnerStore = useSearchPartner();
 const userStore = useUserStore();
+const toast = useToast();
 
 const isMute = ref(false);
 const volume = ref(23);
 const reportVisible = ref(false);
 const emojisVisible = ref(false);
-const message = ref(null);
+const message = ref("");
 const localStreamRef = ref(null);
 const remoteStreamRef = ref(null);
 
@@ -55,28 +59,38 @@ const toggleEmojiVisibility = () => {
   emojisVisible.value = !emojisVisible.value;
 };
 const mama=1;
+let nick = userStore.user.details.details.firstname ? userStore.user.details.details.firstname : "Аноним" ;
 const findRoomArgs = reactive({
   gender: searchPartnerStore.gender,
   country: +searchPartnerStore.countryIndex,
-  userId: Cookies.get("user") 
-  ? JSON.parse(Cookies.get("user")).details.userId 
-  : "",
+  userId: Cookies.get("user") ? JSON.parse(Cookies.get("user")).details.userId : "",
   countries:searchPartnerStore.counta,//JSON.parse(Cookies.get("countries")).c,
+  nick: nick,
 });
-console.log("screen ", searchPartnerStore.counta)
-const sendMessage = async () => {
+//console.log("screen ", searchPartnerStore.counta)
+  const sendMessage = async () => {
   console.log(`Message: `, message.value);
   console.log(`Room: `, chatStore.roomDetails.connected);
-  if (message.value === null || !chatStore.roomDetails.connected) {
+  if (!message.value || !chatStore.roomDetails.connected) {
+  toast.error("Обождитe партнера-то!")
     return;
   } else {
     const text = message.value;
-    const roomId = chatStore.roomDetails.id;
+    const roomId = chatStore.roomDetails.partner;
+   // alert('roomId: '+ roomId);
+    const name = userStore.user.details.details.firstname;
     const userId = Cookies.get("user")
       ? JSON.parse(Cookies.get("user")).details.userId
       : "";
-    await chatStore.pushMessage({ text, roomId, userId });
-    socket.emit("newMessage", { text, userId, roomId });
+      let Msgs = document.getElementById("Msgs")
+      if(Msgs){
+    await chatStore.pushMessage({ name, text, roomId, userId });
+    Msgs.scrollTop=Msgs.clientHeight + Msgs.scrollHeight;
+    let a = { name, text, userId, roomId };
+    //alert(JSON.stringify(a))
+    socket.emit("newMessage1", a);
+    message.value = "";
+    }
   }
 };
 
@@ -96,10 +110,14 @@ onMounted(async () => {
     return;
   }
 });
+onBeforeUnmount(async ()=>{
+	//alert('onUnmounted')
+	stopRoom();
+})
 </script>
 <template>
-  <div class="wrapper">
-  <div>Users online: <span id="userCount">0</span></div>
+  <div class="w-full">
+  <div>Users online: <span id="userCount">{{state.counts}}</span></div>
     <div class="top-0 grid w-full grid-cols-2 screens">
       <div
         class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-gray-600"
@@ -169,14 +187,14 @@ onMounted(async () => {
         id="btnStop"
         @click="stopRoom()"
         :disabled="
-            !state.inRoom
+            !state.inRoom && !state.searching
             "
          cass="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
         >
           Стоп
         </button>
         <button
-          :disabled="searchPartnerStore.loading || state.loading"
+          :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
           @click="searchPartnerStore.toggleCountrySearch(true)"
           cass="flex items-center justify-center flex-1 w-full h-full space-x-2 bg-gray-200 rounded-md disabled:bg-gray-400"
         >
@@ -192,7 +210,7 @@ onMounted(async () => {
         </button>
         <button
           @click="searchPartnerStore.toggleGender()"
-          :disabled="searchPartnerStore.loading || state.loading"
+          :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
           cass="flex-1 w-full h-full bg-gray-200 rounded-md disabled:bg-gray-400"
         >
           Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
@@ -200,26 +218,20 @@ onMounted(async () => {
         <button 
         @click="toggleCamera()"
         id="camToggle" 
-        disabled>{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
+        :disabled="!state.inRoom">{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
       </div>
 
       <form
         @submit.prevent="sendMessage()"
-        cass="relative flex flex-1 gap-2 m-2 bg-white rounded-md"
+        cass="relative flex flex-1 gap-2 m-2 bg-brown rounded-md w-full"
       >
-        <div cass="w-full chat">
-          <div cass="chat_msgs">
-            <p v-for="message in chatStore.messages" class="messages">
-              {{ message.text }}
-            </p>
-          </div>
-          <hr />
-          <div cass="absolute bottom-0 flex w-full p-2 border-t-2 chat_text">
+      <div class="relative bottom-0 flex w-full p-2 border-t-2">
             <input
               type="text"
               name="chat_text"
               id="chat_text"
-              class="flex-1 outline-none"
+              
+              class="chatinput"
               placeholder="Введите сюда текст сообщения и нажмите Enter"
               v-model="message"
             />
@@ -229,6 +241,14 @@ onMounted(async () => {
             ></FaceSmileIcon>
             <TheEmojiPicker v-if="emojisVisible" @emoji_click="handleEvent" />
           </div>
+        <div class="chat">
+          <div id="Msgs" class="msgs">
+            <p v-for="message in chatStore.messages" class="messages">
+              <span class="chat-username"><b>{{ message.name }}: </b></span>{{ message.text }}
+            </p>
+          </div>
+         
+          
         </div>
       </form>
     </div>
@@ -278,5 +298,28 @@ button{background:orange;color:white;font-weight:bold;font-size:1rem;margin-left
 }
 .functions-left button:hover {
   box-shadow: inset 0 0 10px black;
+}
+.chatinput{
+width:100%;
+	padding-left:2em;
+}
+.chat{
+	background:black;
+	position:relative;
+	display:block;
+	width:100%;
+	height: 150px;
+	overflow:hidden;
+}
+.msgs{
+	background:white;
+	width:100%;
+	height:100%;
+	position:relative;
+	display:block;
+	overflow-y:auto;
+	white-space: pre-line;
+	word-wrap: break-word;
+	overflow-wrap:break-word;
 }
 </style>
