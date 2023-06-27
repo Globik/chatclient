@@ -1,0 +1,26 @@
+body{
+	background: rgba(38, 38, 38, 1);
+	color:white;
+	font-family:"Raleway";
+	font-weight: 400;
+	
+	font-size: 18px;
+	padding:40px;
+}
+h1.suka{
+	font-size: 4rem;
+	line-height: 2;
+	
+}
+p.p{
+	line-height: 2;
+	font-weight:bold;
+	font-size: 1.8rem;
+	letter-spacing: 2px;
+	font-family:"Gill Sans";
+}
+article#introduce{
+width:70%;
+margin:0 auto;	
+
+}

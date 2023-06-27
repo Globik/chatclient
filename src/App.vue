@@ -18,7 +18,7 @@ onMounted(async () => {
         "https://api.ipgeolocation.io/ipgeo?apiKey=1c9dee18518d4b55becc6cee7bf6ccf8"
       );
       const data = await res.data;
-
+//alert(JSON.stringify(data))
       searchPartner.setCountry(data.country_code2);
       searchPartner.getCountryIndexAndSet(data.country_code2);
       await searchPartner.setLoading(false);
@@ -28,16 +28,16 @@ onMounted(async () => {
   }
 });
 </script>
-<!--
+
 
 <template>
-  <div class="min-h-screen app bg-sky-100">
+  <div class="app-wrapper">
     <routerView />
   </div>
  </template>
--->
 
 
+<!--
 
 <template>
   <div class="min-h-screen app bg-sky-100" lass="wrapper w-full bg-sky-100 font-main min-h-screen container mx-auto sm:px-4 px-2 pt-8">
@@ -46,9 +46,12 @@ onMounted(async () => {
       <RouterView />
     </transition>
   </div>
-</template>
+</template> -->
 
 <style scoped>
+.app-wrapper{
+	background: rgba(38, 38, 38, 1);
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;

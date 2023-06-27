@@ -117,10 +117,10 @@ onBeforeUnmount(async ()=>{
 </script>
 <template>
   <div class="w-full">
-  <div>Users online: <span id="userCount">{{state.counts}}</span></div>
+  <div id="topPanel"><span class="online-now">Онлайн сейчас: </span><span id="userCount">{{state.counts}}</span></div>
     <div class="top-0 grid w-full grid-cols-2 screens">
       <div
-        class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-gray-600"
+        class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-slate-50 rounded-xl mx-1"
       >
         <video
           ref="remoteStreamRef"
@@ -130,7 +130,7 @@ onBeforeUnmount(async ()=>{
         ></video>
         <ExclamationCircleIcon
           @click="toggleReport"
-          class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-white hover:opacity-100 top-4 right-4"
+          class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-black hover:opacity-100 top-4 right-4"
         ></ExclamationCircleIcon>
 
         <div
@@ -140,25 +140,25 @@ onBeforeUnmount(async ()=>{
           <button @click="toggleSound()" class="">
             <SpeakerWaveIcon
               v-if="!isMute"
-              class="w-6 h-6 transition fill-gray-400 hover:fill-white"
+              class="w-6 h-6 transition fill-gray-400 hover:fill-white mx-2"
             ></SpeakerWaveIcon>
             <SpeakerXMarkIcon
               v-else
-              class="w-6 h-6 transition fill-gray-400 hover:fill-white"
+              class="w-6 h-6 transition fill-gray-400 hover:fill-white mx-2"
             ></SpeakerXMarkIcon>
           </button>
-          <input
+         <!--  <input
             min="0"
             max="100"
             class="w-full cursor-pointer"
             type="range"
             v-model="volume"
             id="volume-slider"
-          />
+          /> -->
         </div>
       </div>
       <div
-        class="relative max-h-[682px] xl:h-[740px] xl:aspect-auto aspect-square screen_second"
+        class="relative max-h-[682px] xl:h-[740px] xl:aspect-auto aspect-square screen_second bg-slate-50 rounded-xl mx-1"
       >
         <video
           autoplay
@@ -170,8 +170,8 @@ onBeforeUnmount(async ()=>{
       </div>
     </div>
 <!--  functions h-[100% - 682px]    -->
-    <div clas="flex w-full functions h-[100% - 682px] ">
-      <div id="undervideocontainer" 
+    <div id="underpanel" clas="flex w-full functions h-[100% - 682px]">
+      <div id="undervideocontainer" style=""
         clas="flex flex-col items-center flex-1 gap-2 p-2 space-x-1 text-2xl font-medium md:flex-row functions-left"
       >
         <button
@@ -179,6 +179,7 @@ onBeforeUnmount(async ()=>{
           :disabled="
             state.loading || state.searching || searchPartnerStore.loading
           "
+          class="panel-btn"
           cass="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
         >
           {{ state.inRoom ? "Далее" : "Старт" }}
@@ -189,6 +190,7 @@ onBeforeUnmount(async ()=>{
         :disabled="
             !state.inRoom && !state.searching
             "
+            class="panel-btn"
          cass="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
         >
           Стоп
@@ -196,6 +198,7 @@ onBeforeUnmount(async ()=>{
         <button
           :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
           @click="searchPartnerStore.toggleCountrySearch(true)"
+          class="panel-btn"
           cass="flex items-center justify-center flex-1 w-full h-full space-x-2 bg-gray-200 rounded-md disabled:bg-gray-400"
         >
           <p v-if="searchPartnerStore.loading || state.loading">Загрузка...</p>
@@ -211,6 +214,7 @@ onBeforeUnmount(async ()=>{
         <button
           @click="searchPartnerStore.toggleGender()"
           :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
+          class="panel-btn"
           cass="flex-1 w-full h-full bg-gray-200 rounded-md disabled:bg-gray-400"
         >
           Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
@@ -218,14 +222,20 @@ onBeforeUnmount(async ()=>{
         <button 
         @click="toggleCamera()"
         id="camToggle" 
+        class="panel-btn"
         :disabled="!state.inRoom">{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
+        <button 
+        
+        class="panel-btn"
+        disabled>screen</button>
       </div>
 
       <form
+      class="formchat"
         @submit.prevent="sendMessage()"
         cass="relative flex flex-1 gap-2 m-2 bg-brown rounded-md w-full"
       >
-      <div class="relative bottom-0 flex w-full p-2 border-t-2">
+      <div class="chat-box" cass="relative bottom-0 flex w-full p-2">
             <input
               type="text"
               name="chat_text"
@@ -237,7 +247,8 @@ onBeforeUnmount(async ()=>{
             />
             <FaceSmileIcon
               @click="toggleEmojiVisibility"
-              class="w-8 h-8 cursor-pointer fill-gray-300"
+              class="faceicon"
+              cass="w-8 h-8 cursor-pointer fill-gray-300"
             ></FaceSmileIcon>
             <TheEmojiPicker v-if="emojisVisible" @emoji_click="handleEvent" />
           </div>
@@ -282,10 +293,33 @@ position:relative;
 #undervideocontainer{
 	margin-top:5px;
 }
-button[disabled]{
-	background:gray;
+button[disabled].panel-btn{
+	background: rgba(216, 233, 255, 1);
 }
-button{background:orange;color:white;font-weight:bold;font-size:1rem;margin-left:10px;padding:15px;margin-bottom:4px;margin-top:4px;}
+
+
+button.panel-btn{
+background:linear-gradient(to right,rgba(35, 128, 255, 1),rgba(0, 219, 220, 1),rgba(0, 221, 101, 1));
+
+border-radius: 10px;
+
+font-weight: bold;
+font-size: 1.8rem;
+line-height: 1.5;
+
+font-family: monospace;
+letter-spacing: 2px;
+
+self-align:center;
+
+color:rgba(73, 73, 73, 1);
+
+margin-left:10px;
+margin-right:10px;
+padding:15px;
+margin-bottom:20px;
+margin-top:20px;
+}
 .screen_first:hover .report-icon {
   display: block;
 }
@@ -299,17 +333,80 @@ button{background:orange;color:white;font-weight:bold;font-size:1rem;margin-left
 .functions-left button:hover {
   box-shadow: inset 0 0 10px black;
 }
+
+#userCount{
+	font-weight: bold;
+	color:orange;
+}
+
+#topPanel{
+	order: 1px solid orange;
+	padding:3px;
+}
+#undervideocontainer{
+	display:flex;
+	 flex-wrap: wrap;
+    flex-direction: row;
+	justify-content: center;
+	align-items: center;
+    position: relative;
+}
+.online-now{
+	font-weight:bold;
+	line-height: 1.6;
+	margin-left: 4px;
+}
+#underpanel{
+	
+	width:70%;
+	margin:0 auto;
+	display:block;
+	position: relative;
+}
+.formchat{
+	
+	width:100%;
+	margin:0 auto;
+}
+.chat-box{
+ width: 100%;
+	
+
+	position:relative;
+	display:block;
+}
 .chatinput{
 width:100%;
-	padding-left:2em;
+margin:0 auto;
+height:70px;
+border-top-left-radius: 0.5rem;
+border-top-right-radius: 0.5rem;
+padding-left:1em;
+padding-right: 55px;
+font-size:1.5rem;
+color:black;
+background:white;
+}
+.faceicon{
+	color:yellow;
+	width:50px;
+	height:50px;
+	position:absolute;
+	top:10px;
+	right:1px;
+	cursor:pointer;
 }
 .chat{
 	background:black;
 	position:relative;
 	display:block;
 	width:100%;
-	height: 150px;
+	height: 70px;
 	overflow:hidden;
+	margin:0 auto;
+	
+	border-bottom-left-radius: 0.5rem; /* 8px */
+border-bottom-right-radius: 0.5rem;
 }
 .msgs{
 	background:white;
