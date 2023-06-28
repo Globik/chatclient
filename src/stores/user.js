@@ -45,11 +45,15 @@ export const useUserStore = defineStore("userStore", () => {
       }
     }
   }
-
+ function removeToken(){
+	  Cookies.remove("user");
+	  
+ }
   return {
     user,
     setUser,
     setToken,
     updateUser,
+    removeToken,
   };
 });

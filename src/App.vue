@@ -31,7 +31,7 @@ onMounted(async () => {
 
 
 <template>
-  <div class="app-wrapper">
+  <div class="app-wrappe">
     <routerView />
   </div>
  </template>
@@ -49,8 +49,8 @@ onMounted(async () => {
 </template> -->
 
 <style scoped>
-.app-wrapper{
-	background: rgba(38, 38, 38, 1);
+.app-wrappe{
+	ackground: rgba(38, 38, 38, 0);
 }
 .fade-enter-active,
 .fade-leave-active {

@@ -19,6 +19,7 @@
     "peerjs": "^1.4.7",
     "pinia": "^2.0.32",
     "socket.io-client": "^4.6.1",
+    "tailwind": "^4.0.0",
     "vk-io": "^4.8.3",
     "vkontakte-api": "^3.0.3",
     "vue": "^3.2.47",

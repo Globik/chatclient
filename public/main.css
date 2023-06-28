@@ -1,26 +1,64 @@
+
+html, body{
+	height:100%;
+	font-size:100%;
+}
 body{
 	background: rgba(38, 38, 38, 1);
-	color:white;
-	font-family:"Raleway";
-	font-weight: 400;
+
 	
-	font-size: 18px;
-	padding:40px;
+	
+	padding:10px;
 }
 h1.suka{
 	font-size: 4rem;
-	line-height: 2;
-	
+	line-height: 1.5;
+	color:white;
 }
 p.p{
-	line-height: 2;
-	font-weight:bold;
-	font-size: 1.8rem;
-	letter-spacing: 2px;
+	line-height: 1.5;
+	color:white;
+	font-size: 1.4rem;
+	letter-spacing: 1px;
 	font-family:"Gill Sans";
+	letter-spacing:1px;
 }
 article#introduce{
 width:70%;
 margin:0 auto;	
+padding-top:20px;
+}
+@media screen and (max-width: 401px){
+				html,body{
+					ackground: green;
+					font-size:80%;
+				}
+				h1.suka{
+	font-size: 1.9rem;
+	}
+	article#introduce{
+width:100%;
+margin-left:2px;
+margin-right:2px;
 
+padding-left:2px;
+padding-right:2px;
+
+}
+}
+
+#mainfooter{
+	bckground:rgb(10,10,0);
+	}
+	section#footersection{
+	display:flex;
+	 flex-wrap: wrap;
+    flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+				
+.social{
+display:inline-block;
+	self-align:start;
 }

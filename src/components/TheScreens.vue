@@ -32,6 +32,7 @@ const emojisVisible = ref(false);
 const message = ref("");
 const localStreamRef = ref(null);
 const remoteStreamRef = ref(null);
+const camToggleRef = ref(null);
 
 const emits = defineEmits(["toggleReportEvent"]);
 
@@ -50,7 +51,10 @@ const toggleSound = () => {
   }
   isMute.value = !isMute.value;
 };
-
+const logout = () => {
+	userStore.removeToken();
+	window.location.reload();
+}
 const handleEvent = (e) => {
   message.value += e;
 };
@@ -59,7 +63,7 @@ const toggleEmojiVisibility = () => {
   emojisVisible.value = !emojisVisible.value;
 };
 const mama=1;
-let nick = userStore.user.details.details.firstname ? userStore.user.details.details.firstname : "Аноним" ;
+let nick = "Anonym";//userStore.user.details.details.firstname ? userStore.user.details.details.firstname : "Аноним" ;
 const findRoomArgs = reactive({
   gender: searchPartnerStore.gender,
   country: +searchPartnerStore.countryIndex,
@@ -111,13 +115,13 @@ onMounted(async () => {
   }
 });
 onBeforeUnmount(async ()=>{
-	//alert('onUnmounted')
+	
 	stopRoom();
 })
 </script>
 <template>
   <div class="w-full">
-  <div id="topPanel"><span class="online-now">Онлайн сейчас: </span><span id="userCount">{{state.counts}}</span></div>
+  <div id="topPanel"><span class="online-now">Онлайн сейчас: </span><span id="userCount">{{state.counts}}</span> | <button title="Разлогиниться" class="panel-btn" @click="logout()">Выйти</button></div>
     <div class="top-0 grid w-full grid-cols-2 screens">
       <div
         class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-slate-50 rounded-xl mx-1"
@@ -169,18 +173,20 @@ onBeforeUnmount(async ()=>{
         ></video>
       </div>
     </div>
+    
 <!--  functions h-[100% - 682px]    -->
-    <div id="underpanel" clas="flex w-full functions h-[100% - 682px]">
-      <div id="undervideocontainer" style=""
-        clas="flex flex-col items-center flex-1 gap-2 p-2 space-x-1 text-2xl font-medium md:flex-row functions-left"
-      >
+    <div id="underpanel">
+      <div 
+      id="undervideocontainer" 
+    >
         <button
           @click="findNewRoom(findRoomArgs)"
+          id="btnStart"
           :disabled="
             state.loading || state.searching || searchPartnerStore.loading
           "
           class="panel-btn"
-          cass="flex-1 w-full h-full bg-blue-400 rounded-md disabled:bg-gray-400"
+          
         >
           {{ state.inRoom ? "Далее" : "Старт" }}
         </button>
@@ -191,15 +197,20 @@ onBeforeUnmount(async ()=>{
             !state.inRoom && !state.searching
             "
             class="panel-btn"
-         cass="flex-1 w-full h-full bg-red-400 rounded-md disabled:bg-gray-400"
+         
         >
           Стоп
         </button>
         <button
+        class="panel-btn"
+        @click="searchPartnerStore.toggleCountrySearch(true)"
+        >Поиск</button>
+        <!--
+        <button
           :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
           @click="searchPartnerStore.toggleCountrySearch(true)"
           class="panel-btn"
-          cass="flex items-center justify-center flex-1 w-full h-full space-x-2 bg-gray-200 rounded-md disabled:bg-gray-400"
+          
         >
           <p v-if="searchPartnerStore.loading || state.loading">Загрузка...</p>
           <p v-else class="flex items-center">
@@ -215,19 +226,22 @@ onBeforeUnmount(async ()=>{
           @click="searchPartnerStore.toggleGender()"
           :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
           class="panel-btn"
-          cass="flex-1 w-full h-full bg-gray-200 rounded-md disabled:bg-gray-400"
+          
         >
           Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
         </button>
+        -->
+        <!--
         <button 
         @click="toggleCamera()"
         id="camToggle" 
+        ref="camToggleRef"
         class="panel-btn"
         :disabled="!state.inRoom">{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
         <button 
         
         class="panel-btn"
-        disabled>screen</button>
+        disabled>screen</button> -->
       </div>
 
       <form
@@ -242,15 +256,15 @@ onBeforeUnmount(async ()=>{
               id="chat_text"
               
               class="chatinput"
-              placeholder="Введите сюда текст сообщения и нажмите Enter"
+              placeholder="Текст сообщения"
               v-model="message"
-            />
+            /><!--
             <FaceSmileIcon
               @click="toggleEmojiVisibility"
               class="faceicon"
               cass="w-8 h-8 cursor-pointer fill-gray-300"
             ></FaceSmileIcon>
-            <TheEmojiPicker v-if="emojisVisible" @emoji_click="handleEvent" />
+            <TheEmojiPicker v-if="emojisVisible" @emoji_click="handleEvent" /> -->
           </div>
         <div class="chat">
           <div id="Msgs" class="msgs">
@@ -269,6 +283,14 @@ onBeforeUnmount(async ()=>{
 </template>
 
 <style scoped>
+video{
+	background-image: url(/buddy.svg);
+			background-position: center;
+			background-size: calc(90vh - 20%);
+			background-repeat: no-repeat;
+			background-color: rgba(#000, 0.5);
+	border-radius: 5px;
+}
 #fuck::cue{
 	background-image: linear-gradient(to bottom, dimgray, lightgray);
 	color: darkblue;
@@ -290,36 +312,76 @@ position:relative;
 	color:blue;
 }
 
-#undervideocontainer{
-	margin-top:5px;
-}
-button[disabled].panel-btn{
-	background: rgba(216, 233, 255, 1);
+
+button[disabled].panel-btn, button[disabled].panel-btn:hover{
+cursor:initial;
+	ackground: rgba(216, 233, 255, 1);
+	color:gray;
+	background: linear-gradient(to bottom, rgba(216, 233, 255, 1) 0%, rgba(218, 235, 255, 0.7) 26%, rgba(231, 240, 255, 1) 100%);
 }
 
 
 button.panel-btn{
-background:linear-gradient(to right,rgba(35, 128, 255, 1),rgba(0, 219, 220, 1),rgba(0, 221, 101, 1));
-
-border-radius: 10px;
-
-font-weight: bold;
-font-size: 1.8rem;
-line-height: 1.5;
-
-font-family: monospace;
-letter-spacing: 2px;
-
-self-align:center;
-
-color:rgba(73, 73, 73, 1);
-
-margin-left:10px;
-margin-right:10px;
-padding:15px;
-margin-bottom:20px;
-margin-top:20px;
+  cursor: pointer;
+  margin-left: 5px;
+  argin-bottom: 15px;
+  text-shadow: 0 -2px 0 #4a8a65, 0 1px 1px #c2dece;
+  box-sizing: border-box;
+  font-size: 2em;
+  font-family: Helvetica, Arial, Sans-Serif;
+  text-decoration: none;
+  font-weight: bold;
+  color: #5ea97d;
+  height: 65px;
+  line-height: 65px;
+  padding: 0 32.5px;
+  display: inline-block;
+  width: auto;
+  background: linear-gradient(to bottom, #9ceabd 0%, #9ddab6 26%, #7fbb98 100%);
+  border-radius: 5px;
+  border-top: 1px solid #c8e2d3;
+  border-bottom: 1px solid #c2dece;
+  top: 0;
+  transition: all 0.06s ease-out;
+  position: relative;
+  leter-spacing: 1px;
 }
+button.panel-btn:before{
+  display: inline-block;
+  content:"";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  top: 6px;
+  border-radius: 5px;
+  height: 65px;
+  background: linear-gradient(to top, #1e5033 0%, #378357 6px);
+  transition: all 0.078s ease-out;
+  box-shadow: 0 1px 0 2px rgba(0, 0, 0, 0.3), 0 5px 2.4px rgba(0, 0, 0, 0.5), 0 10.8px 9px rgba(0, 0, 0, 0.2);
+}
+button.panel-btn:visited{
+	 color: #5ea97d;
+	 margin:0;
+}
+
+button.panel-btn:hover {
+  background: linear-gradient(to bottom, #baf1d1 0%, #b7e4ca 26%, #96c7ab 100%);
+}
+
+button.panel-btn:active:not(:disabled){
+  top: 6px;
+  text-shadow: 0 -2px 0 #7fbb98, 0 1px 1px #c2dece, 0 0 4px white;
+  color: white;
+}
+
+button.panel-btn:active:before:not(:disabled) {
+content:"";
+  top: 0;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.7), 0 3px 9px rgba(0, 0, 0, 0.2);
+}
+
+
 .screen_first:hover .report-icon {
   display: block;
 }
@@ -340,8 +402,11 @@ margin-top:20px;
 }
 
 #topPanel{
-	order: 1px solid orange;
-	padding:3px;
+	brder: 1px solid orange;
+	padding-left:3px;
+	padding-top:10px;
+	padding-bottom:10px;
+	margin-bottom:8px;
 }
 #undervideocontainer{
 	display:flex;
@@ -350,14 +415,21 @@ margin-top:20px;
 	justify-content: center;
 	align-items: center;
     position: relative;
+    margin-top:10px;
+	margin-bottom:20px;
+	padding-bottom:5px;
+	brder:1px solid red;
 }
 .online-now{
 	font-weight:bold;
 	line-height: 1.6;
 	margin-left: 4px;
+	color:white;
+	letter-spacing:1px;
+	text-decoration:underline;
 }
 #underpanel{
-	
+	brder:1px solid orange;
 	width:70%;
 	margin:0 auto;
 	display:block;
@@ -385,7 +457,11 @@ padding-left:1em;
 padding-right: 55px;
 font-size:1.5rem;
 color:black;
-background:white;
+
+background: linear-gradient(to bottom, rgba(216, 233, 255, 0.7) 0%, rgba(225, 243, 255, 0.7) 26%, rgba(250, 246, 255, 0.7) 100%);
+}
+.chatinput::placeholder{
+	color:rgba(0,0,0,0.4);
 }
 .faceicon{
 	color:yellow;
@@ -418,5 +494,25 @@ border-bottom-right-radius: 0.5rem;
 	white-space: pre-line;
 	word-wrap: break-word;
 	overflow-wrap:break-word;
+	padding-left: 0.5em;
+	padding-top:0.5em;
 }
+@media screen and (max-width: 401px){
+		
+				button.panel-btn{
+			
+					padding-top: 0;
+					padding-bottom:0;
+					padding-left: 15px;
+					padding-right:15px;
+	
+				
+				}
+				#underpanel{
+					width:100%;
+				}
+				video{
+					background-size:90%;
+				}
+				}
 </style>

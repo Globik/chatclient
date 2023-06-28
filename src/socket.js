@@ -65,10 +65,10 @@ function gotDevices(deviceInfos){
 		if(deviceInfo.kind === 'videoinput'){
 			if(kK == 0){
 				state.videoInput = deviceInfo.deviceId;
-				//alert(state.videoInput);
+				
 				state.cam = state.videoInput;
-				camToggle.setAttribute("data-current" , state.videoInput);
-			//	chatStore.updateVideoInput('input', state.videoInput);
+				//camToggle.setAttribute("data-current" , state.videoInput);
+	
 			}else if(kK == 1){
 				
 				state.videoInput2 = deviceInfo.deviceId;
@@ -139,6 +139,7 @@ export const stopRoom = async function(el){
  //const someEvent = new Event("hello");
  
 export const findNewRoom = async (data) => {
+	btnStart.disabled = true;
 	console.log("start");
 	const us=useUserStore();
 	
@@ -214,6 +215,7 @@ REMOTE.onloadedmetadata = function (ev) {
 			}
 }
 }catch (error) {
+	btnStart.disabled = false;
     console.log(error);
     alert(error);
     toast.error(error.message);
