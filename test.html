@@ -1,0 +1,135 @@
+<html><head><title>knopki</title>
+<style>
+html, body{
+	height:100%;
+}
+body{
+	font-size:100%;
+}
+div{
+	margin-top:50px;
+	margin-bottom:50px;
+}
+
+button.panel-btn{
+	-webkit-tap-highlight-color:transparent;
+  cursor: pointer;
+  margin-left: 0.313rem;/*5px;*/
+  argin-bottom: 15px;
+  text-shadow: 0 -0.125rem 0 #4a8a65, 0 0.063rem 0.063rem #c2dece; /* 0 -2px 0 #4a8a65, 0 1px 1px #c2dece;*/
+  box-sizing: border-box;
+  font-size: 2rem;
+  font-family: Helvetica, Arial, Sans-Serif;
+  text-decoration: none;
+  font-weight: bold;
+  color: #5ea97d;
+  height: 4.063rem;/*65px */
+  line-height: 4.063rem;/*65px;*/
+  padding: 0 2.031rem;/*32.5px;*/
+  display: inline-block;
+  width: auto;
+  background: linear-gradient(to bottom, #9ceabd 0%, #9ddab6 26%, #7fbb98 100%);
+  border-radius: 0.313rem;/*5px;*/
+  border-top: 1px solid #c8e2d3;
+  border-bottom: 0.063rem solid #c2dece;/*1px*/
+  top: 0;
+  transition: all 0.06s ease-out;
+  position: relative;
+  letter-spacing: 0.063rem;
+}
+
+
+
+button.panel-btn:hover {
+  background: linear-gradient(to bottom, #baf1d1 0%, #b7e4ca 26%, #96c7ab 100%);
+}
+
+button.panel-btn:active{
+  top: 6px;
+  text-shadow: 0 -2px 0 #7fbb98, 0 1px 1px #c2dece, 0 0 4px white;
+  color: white;
+}
+
+button.panel-btn:active:before{
+
+ top: 0;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.7), 0 3px 9px rgba(0, 0, 0, 0.2);
+}
+
+button.panel-btn:before{
+  display: inline-block;
+  content:"";
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  top: 6px;
+  border-radius: 5px;
+  height: 65px;
+  background: linear-gradient(to top, #1e5033 0%, #378357 6px);
+  transition: all 0.078s ease-out;
+  box-shadow: 0 1px 0 2px rgba(0, 0, 0, 0.3), 0 5px 2.4px rgba(0, 0, 0, 0.5), 0 10.8px 9px rgba(0, 0, 0, 0.2);
+}
+
+/* drugaja knopka */
+
+
+.button {
+  position: relative;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #888888;
+  outline: none;
+  background-color: #f4f5f6;
+  border-radius: 4px;
+  box-shadow: -6px -2px 3px #ffffff, -6px -5px 5px #ffffff, -2px 0px 3px #ffffff, 6px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: 0.13s ease-in-out;
+  cursor: pointer;
+}
+.button:active {
+  box-shadow: none;
+}
+
+.buton:active .button__content .button__text, .button:active .button__content .button__icon {
+  transform: translate3d(0px, 0px, 0px);
+}
+/*
+.button__icon {
+  position: relative;
+  display: flex;
+  transform: translate3d(0px, -4px, 0px);
+  grid-column: 4;
+  align-self: start;
+  justify-self: end;
+  width: 32px;
+  height: 32px;
+  transition: 0.13s ease-in-out;
+}
+
+*/
+
+
+</style>
+</head><body>
+	<div>
+	<button class="panel-btn">click</button>
+	</div>
+	<h1>header</h1></h1><p>Some text</p>
+	<div>
+	<input type="range" min="0" max="1" value="1" step="0.1" onchange="was(this);">
+	</div>
+	
+	<button class="button">
+  
+     <svg xmlns="http://www.w3.org/2000/svg" fill="none"  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+  <path stroke-linecap="round" stroke="blue" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+</svg>
+   
+</button>
+	<script>
+	function was(el){
+		document.body.style.fontSize = el.step+"vw";
+	}
+	</script>
+</body></html>

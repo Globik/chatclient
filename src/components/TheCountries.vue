@@ -61,11 +61,14 @@ if(light.value=="off"){
 
 <template>
   <transition name="fade" mode="out-in">
+  
     <div id="landWrapper"
       v-if="searchPartner.showCountrySearch"
       class="search-countries fixed flex justify-center inset-0 w-full h-screen bg-black bg-opacity-60"
     >
+    
       <form id="pform" @submit.prevent class="mt-14 px-2">
+      <!--
         <div class="search-bar flex items-center">
           <div class="bg-white p-2 w-full rounded-t flex items-center">
             <MagnifyingGlassIcon class="w-5 h-5 text-gray-700" />
@@ -104,25 +107,42 @@ if(light.value=="off"){
             </li>
           </ul>
         </div>
-        <div id="krestikCont"> <button
+        
+        -->
+        <div id="krestikCont"> 
+        <button
         id="krestik"
           @click="setCountries()"
           cass="fixed right-6 top-60"
         >
           <XMarkIcon lass="w-8 h-8 ml-3 text-black"></XMarkIcon>
-        </button><p class="lands-p" style="margin-right: 40px;">Вы можете выбрать до пяти стран или все страны для поиска: </p>
-        <p class="lands-p">Выбранные страны: {{ checkedLands}} = {{ checkedLands.length }} {{ light=="all"?"Все страны":"" }}</p></div>
-         <div><p class="lands-p"><label
-         class="flex items-center justify-start font-semibold w-full p-2 my-2 bg-gray-100 rounded transition hover:bg-gray-200"
-         ><span class="land-span">Все страны</span><input id="allInput" type="checkbox" 
+        </button>
+        <p class="lands-p">Вы можете выбрать до пяти стран или все страны для поиска: </p>
+        <p class="lands-p">Выбранные страны: {{ checkedLands.length }} {{ light=="all"?"Все страны":"" }}</p>
+        
+         
+         <div class="lands-c">
+         
+       <!--  <div class="one-c"> -->
+         <label>
+         <span class="land-span">Все страны</span>
+         </label>
+        <!-- </div> -->
+        
+        
+        <!-- <div class="two-c"> -->
+         <input 
+         id="allInput" 
+         type="checkbox" 
         :true-value="all"
         :false-value="off"
          value="all" 
          v-model="light"
          :checked=false
-         @change="allLand();"
-         
-         ></label></p></div>
+         @change="allLand();">
+        <!-- </div> -->
+        </div>
+         </div>
         <section id="Land">
         
          <div id="lll" v-if="light==='off'">
@@ -213,6 +233,7 @@ if(light.value=="off"){
 
 p {
   overflow: hidden;
+  border:1px solid red;
   idth: 20ic;
 }
 
@@ -270,6 +291,27 @@ input[type=checkbox]{
 	height:30px;
 	display:inline-block;
 	
+}
+
+div.lands-c{
+	display:grid;
+	background:white;
+	grid-template-columns: 50% auto;
+	padding:0;
+	margin:0;
+}
+div.lands-c label{
+	border:1px solid red;
+	align-self: center;
+	margin-bottom:0;
+	width:100%;
+}
+
+div.lands-c input{
+	align-self:center;
+	justify-self:end;
+	margin:0;
+	padding:0;
 }
 @media screen and (max-width: 390px) and (orientation: portrait){
 	.lands-p{

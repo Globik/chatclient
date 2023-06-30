@@ -6,6 +6,8 @@ import {
   FaceSmileIcon,
   ExclamationCircleIcon,
 } from "@heroicons/vue/24/solid";
+//import { ChatIcon } from "@vue-hero-icons/outline"
+
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 import { useToast } from "vue-toastification";
 
@@ -26,6 +28,7 @@ const userStore = useUserStore();
 const toast = useToast();
 
 const isMute = ref(false);
+const isShow = ref(false);
 const volume = ref(23);
 const reportVisible = ref(false);
 const emojisVisible = ref(false);
@@ -51,6 +54,14 @@ const toggleSound = () => {
   }
   isMute.value = !isMute.value;
 };
+
+
+const toggleMenu = () =>{
+	isShow.value = !isShow.value;
+}
+function dofuck(){
+	
+}
 const logout = () => {
 	userStore.removeToken();
 	window.location.reload();
@@ -120,36 +131,66 @@ onBeforeUnmount(async ()=>{
 })
 </script>
 <template>
-  <div class="w-full">
-  <div id="topPanel"><span class="online-now">Онлайн сейчас: </span><span id="userCount">{{state.counts}}</span> | <button title="Разлогиниться" class="panel-btn" @click="logout()">Выйти</button></div>
+<div id="logoutDiv">
+<div class="logout-item">
+<button title="выход" id="btnLogout" @click="logout()"><span>Выход</span>
+
+</button>
+</div></div>
+  <div class="w-full" @click="dofuck">
+  <div id="topPanel">
+  
+  <div id="countcontainer"><span class="online-now it">Онлайн: </span><span class="it" id="userCount">{{state.counts}}</span></div>
+  <div class="ita">
+  
+  <button title="Настройки" @click="toggleMenu()">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+  <path fill-rule="evenodd" d="M4.25 2A2.25 2.25 0 002 4.25v2.5A2.25 2.25 0 004.25 9h2.5A2.25 2.25 0 009 6.75v-2.5A2.25 2.25 0 006.75 2h-2.5zm0 9A2.25 2.25 0 002 13.25v2.5A2.25 2.25 0 004.25 18h2.5A2.25 2.25 0 009 15.75v-2.5A2.25 2.25 0 006.75 11h-2.5zm9-9A2.25 2.25 0 0011 4.25v2.5A2.25 2.25 0 0013.25 9h2.5A2.25 2.25 0 0018 6.75v-2.5A2.25 2.25 0 0015.75 2h-2.5zm0 9A2.25 2.25 0 0011 13.25v2.5A2.25 2.25 0 0013.25 18h2.5A2.25 2.25 0 0018 15.75v-2.5A2.25 2.25 0 0015.75 11h-2.5z" clip-rule="evenodd" />
+</svg>
+</button>
+  </div>
+  <div id="menuPanel" :class="{'show':isShow}">
+  <div><button title="Тыловая/фронтальная камера">Тыловая камера</button></div>
+  <div><button title="Демонстрация экрана">Демонстрация экрана</button></div>
+  </div>
+  </div>
     <div class="top-0 grid w-full grid-cols-2 screens">
       <div
-        class="max-h-[682px] relative xl:h-[740px] xl:aspect-auto aspect-square screen_first bg-slate-50 rounded-xl mx-1"
+        class="max-h-[682px] relative xl:h-[990px] xl:aspect-auto aspect-square screen_first  videocontainer"
       >
+      <div class="loader" :class="{'unspinner':!state.searching}"></div>
         <video
           ref="remoteStreamRef"
           id="REMOTE"
           autoplay
           class="w-full h-full object-cover z-[99999]"
         ></video>
+        
         <ExclamationCircleIcon
           @click="toggleReport"
-          class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-black hover:opacity-100 top-4 right-4"
+          title="Пожаловаться"
+          class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-red hover:opacity-100 top-4 right-4 excl"
         ></ExclamationCircleIcon>
 
         <div
           class="absolute bottom-0 flex w-full p-2 space-x-4 transition opacity-0 bg-[#0000007e] controller hover:opacity-100"
         >
           <!-- should be binded  -->
-          <button @click="toggleSound()" class="">
+          <button @click="toggleSound()" class="" title="откл/вкл звук">
             <SpeakerWaveIcon
               v-if="!isMute"
-              class="w-6 h-6 transition fill-gray-400 hover:fill-white mx-2"
+              class="w-6 h-6 transitionfill-gray-400 hover:fill-white mx-2"
             ></SpeakerWaveIcon>
             <SpeakerXMarkIcon
               v-else
-              class="w-6 h-6 transition fill-gray-400 hover:fill-white mx-2"
+              class="w-6 h-6 transitio fill-gray-400 hover:fill-white mx-2"
             ></SpeakerXMarkIcon>
+          </button>
+          <button title="во весь экран" class="hover:fill-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:fill-white fill-white-400 ">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+</svg>
+
           </button>
          <!--  <input
             min="0"
@@ -162,7 +203,7 @@ onBeforeUnmount(async ()=>{
         </div>
       </div>
       <div
-        class="relative max-h-[682px] xl:h-[740px] xl:aspect-auto aspect-square screen_second bg-slate-50 rounded-xl mx-1"
+        class="relative max-h-[682px] xl:h-[990px] xl:aspect-auto aspect-square screen_second  videocontainer"
       >
         <video
           autoplay
@@ -254,7 +295,7 @@ onBeforeUnmount(async ()=>{
               type="text"
               name="chat_text"
               id="chat_text"
-              
+              autocomplete="off"
               class="chatinput"
               placeholder="Текст сообщения"
               v-model="message"
@@ -283,6 +324,45 @@ onBeforeUnmount(async ()=>{
 </template>
 
 <style scoped>
+#logoutDiv{
+	display:flex;
+	 flex-wrap: wrap;
+    flex-direction: row;
+	justify-content: end;
+	align-items: center;
+	argin-top:5px;
+	margin-bottom:5px;
+}
+.logout-item{
+display:inline-block;
+align-self: end;
+  justify-self: end;
+  position:relative;
+  mrgin-right:10px;
+}
+#btnLogout{
+line-height:1.5;
+padding:10px;
+	border:1px solid black;
+}
+#btnLogout:hover{
+	background:rgba(255,161,97,0.9);
+}
+.excl{
+	fill:red;
+	ackground:orange;
+}
+.first.videocontainer{
+	position:relative;
+}
+.videocontainer{
+	background:rgba(138,231,197,0.34);
+	border-radius: 5px;
+	border: 2px solid rgba(122,183,121, 0.68);
+	margin-right:2px;
+	margin-left:2px;
+	gap:20px;
+}
 video{
 	background-image: url(/buddy.svg);
 			background-position: center;
@@ -317,35 +397,57 @@ button[disabled].panel-btn, button[disabled].panel-btn:hover{
 cursor:initial;
 	ackground: rgba(216, 233, 255, 1);
 	color:gray;
-	background: linear-gradient(to bottom, rgba(216, 233, 255, 1) 0%, rgba(218, 235, 255, 0.7) 26%, rgba(231, 240, 255, 1) 100%);
+	background: linear-gradient(to bottom, rgba(216, 233, 255, 1) 0%, rgba(218, 235, 255, 1) 26%, rgba(231, 240, 255, 1) 100%);
 }
 
-
+button[disabled].panel-btn:before{
+	background:gray;
+}
 button.panel-btn{
+ -webkit-tap-highlight-color:transparent;
   cursor: pointer;
-  margin-left: 5px;
+  margin-left: 0.313rem;/*5px;*/
   argin-bottom: 15px;
-  text-shadow: 0 -2px 0 #4a8a65, 0 1px 1px #c2dece;
+  text-shadow: 0 -0.125rem 0 #4a8a65, 0 0.063rem 0.063rem #c2dece; /* 0 -2px 0 #4a8a65, 0 1px 1px #c2dece;*/
   box-sizing: border-box;
-  font-size: 2em;
+  font-size: 2rem;
   font-family: Helvetica, Arial, Sans-Serif;
   text-decoration: none;
   font-weight: bold;
   color: #5ea97d;
-  height: 65px;
-  line-height: 65px;
-  padding: 0 32.5px;
+  height: 4.063rem;/*65px */
+  line-height: 4.063rem;/*65px;*/
+  padding: 0 2.031rem;/*32.5px;*/
   display: inline-block;
   width: auto;
   background: linear-gradient(to bottom, #9ceabd 0%, #9ddab6 26%, #7fbb98 100%);
-  border-radius: 5px;
+  border-radius: 0.313rem;/*5px;*/
   border-top: 1px solid #c8e2d3;
-  border-bottom: 1px solid #c2dece;
+  border-bottom: 0.063rem solid #c2dece;/*1px*/
   top: 0;
   transition: all 0.06s ease-out;
   position: relative;
-  leter-spacing: 1px;
+  letter-spacing: 0.063rem;
 }
+
+
+
+button.panel-btn:hover {
+  background: linear-gradient(to bottom, #baf1d1 0%, #b7e4ca 26%, #96c7ab 100%);
+}
+
+button.panel-btn:active:not(:disabled){
+  top: 3px;
+  text-shadow: 0 -2px 0 #7fbb98, 0 1px 1px #c2dece, 0 0 4px white;
+  color: white;
+}
+
+button.panel-btn:active:not(:disabled):before{
+
+  top: 0;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.7), 0 3px 9px rgba(0, 0, 0, 0.2);
+}
+
 button.panel-btn:before{
   display: inline-block;
   content:"";
@@ -353,33 +455,17 @@ button.panel-btn:before{
   left: 0;
   right: 0;
   z-index: -1;
-  top: 6px;
-  border-radius: 5px;
-  height: 65px;
-  background: linear-gradient(to top, #1e5033 0%, #378357 6px);
+  top: 3px;
+  border-radius: 0.313rem;
+  height: 4.063rem;
+  background: linear-gradient(to top, #1e5033 0%, #378357 0.375rem);
   transition: all 0.078s ease-out;
-  box-shadow: 0 1px 0 2px rgba(0, 0, 0, 0.3), 0 5px 2.4px rgba(0, 0, 0, 0.5), 0 10.8px 9px rgba(0, 0, 0, 0.2);
-}
-button.panel-btn:visited{
-	 color: #5ea97d;
-	 margin:0;
+  box-shadow: 0 0.063rem 0 0.125rem rgba(0, 0, 0, 0.3), 0 0.313rem 0.15rem rgba(0, 0, 0, 0.5), 0 0.675rem 0.563rem rgba(0,0, 0, 0.2);
+  /*0 1px 0 2px rgba(0, 0, 0, 0.3), 0 5px 2.4px rgba(0, 0, 0, 0.5), 0 10.8px 9px rgba(0, 0, 0, 0.2);*/
 }
 
-button.panel-btn:hover {
-  background: linear-gradient(to bottom, #baf1d1 0%, #b7e4ca 26%, #96c7ab 100%);
-}
 
-button.panel-btn:active:not(:disabled){
-  top: 6px;
-  text-shadow: 0 -2px 0 #7fbb98, 0 1px 1px #c2dece, 0 0 4px white;
-  color: white;
-}
 
-button.panel-btn:active:before:not(:disabled) {
-content:"";
-  top: 0;
-  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.7), 0 3px 9px rgba(0, 0, 0, 0.2);
-}
 
 
 .screen_first:hover .report-icon {
@@ -397,17 +483,111 @@ content:"";
 }
 
 #userCount{
+margin-left:5px;
 	font-weight: bold;
-	color:orange;
+	clor:orange;
 }
 
 #topPanel{
-	brder: 1px solid orange;
-	padding-left:3px;
-	padding-top:10px;
-	padding-bottom:10px;
-	margin-bottom:8px;
+ display:grid;
+ grid-template-columns: auto 30px;
+ /*justify-content: center;
+ align-items: center;
+ */
+	position:relative;
+	border: 1px solid transparent;
+	padding-left:10px;
+	/*padding-top:10px;
+	padding-bottom:10px;*/
+	margin-bottom:5px;
+	/*margin-top:8px;
+	margin-right:9px;
+	margin-left:9px;*/
+	height: 40px;
+	background:rgb(250,240,190);
+	border-radius:5px;
 }
+#topPanel > div{
+	pdding:1rem;
+}
+#countcontainer{
+align-self:center;
+
+}
+.ita{
+dsplay:block;
+	position:relative;
+	color:orange;
+	justify-self: center;
+	align-self:center;
+brder:2px solid red;
+width:100%;
+}
+.ita > button{
+
+}
+.ita > button > svg{
+	
+	transform:translateX(12px);
+	transform:translateY(0.2em);
+}
+#menuPanel{
+	position:absolute;
+	top:40px;
+	padding:0;
+	right:0;
+	width:auto;
+	display:none;
+	background: rgba(255,204,153,0.8);
+	z-index:1;
+	border-radius:5px;
+}
+#menuPanel > div{
+	margin-top:0px;
+	boder:1px solid black;
+	padding:0;
+}
+#menuPanel > div > button{
+width:100%;
+height:100%;
+border: 1px solid silver;
+line-height:2rem;
+padding:0.6rem;
+border-radius:5px;
+}
+#menuPanel > div > button:hover{
+	background:rgba(255,161,97,0.9);
+	color:white;
+}
+#menuPanel.show{
+	display:block;
+}
+
+
+@media screen and (max-width: 501px){
+#topPanel{
+	eight:50px;
+	ading:0;
+	argin-bottom:4px;
+	argin-left:3px;
+	argin-right:3px;
+}
+.online-now,#userCount{
+	ont-size:1.5rem;
+	align-self:center;
+}
+#menuPanel{
+	op:50px;
+}
+	#menuPanel > div > button{
+	
+		ont-size:2rem;
+	}
+}
+
+
+
+
 #undervideocontainer{
 	display:flex;
 	 flex-wrap: wrap;
@@ -424,9 +604,9 @@ content:"";
 	font-weight:bold;
 	line-height: 1.6;
 	margin-left: 4px;
-	color:white;
+	olor:white;
 	letter-spacing:1px;
-	text-decoration:underline;
+	text-decoration:none;
 }
 #underpanel{
 	brder:1px solid orange;
@@ -481,8 +661,19 @@ background: linear-gradient(to bottom, rgba(216, 233, 255, 0.7) 0%, rgba(225, 24
 	overflow:hidden;
 	margin:0 auto;
 	
-	border-bottom-left-radius: 0.5rem; /* 8px */
+	border-bottom-left-radius: 0.5rem; /* 8px   3px=0.188rem*/
 border-bottom-right-radius: 0.5rem;
+}
+.msgs:before{
+	content:"чат";
+	position:absolute;
+	background:rgba(24,23,4,0.3);
+	top:0;
+	left:45%;
+	padding:0.1em;
+	font-size:0.9em;
+	color:black;
+	line-height:1.2;
 }
 .msgs{
 	background:white;
@@ -497,22 +688,121 @@ border-bottom-right-radius: 0.5rem;
 	padding-left: 0.5em;
 	padding-top:0.5em;
 }
-@media screen and (max-width: 401px){
+@media screen and (max-width: 501px){
 		
 				button.panel-btn{
-			
-					padding-top: 0;
-					padding-bottom:0;
-					padding-left: 15px;
-					padding-right:15px;
+			font-size:22px;
+			line-height:27px;
+			height:44px;
+			width:auto;
+			padding:10px;
+	margin-top:0.5rem;
+	margin-bottom:0.5rem;
 	
 				
 				}
+				button.panel-btn:before{
+					top:3px;
+					height:44px;
+					background: linear-gradient(to top, #1e5033 0%, #378357 0.188rem);
+				}
+				button.panel-btn:active:not(:disabled){
+  top: 3px;
+  }
 				#underpanel{
 					width:100%;
 				}
 				video{
 					background-size:90%;
 				}
+	
 				}
+				
+				/* loader */
+				
+				
+.loader  {
+  animation: rotate 1s infinite;  
+  height: 50px;
+  width: 50px;
+  position:absolute;
+  top:39.5%;
+  left:48%;
+  display:block;
+}
+.loader.unspinner{
+	display:none;
+}
+.loader:before,
+.loader:after {   
+  border-radius: 50%;
+  content: '';
+  display: block;
+  height: 20px;  
+  width: 20px;
+}
+.loader:before {
+  animation: ball1 1s infinite;  
+  background-color: #cb2025;
+  box-shadow: 30px 0 0 #f8b334;
+  margin-bottom: 10px;
+}
+.loader:after {
+  animation: ball2 1s infinite; 
+  background-color: #00a096;
+  box-shadow: 30px 0 0 #97bf0d;
+}
+
+@keyframes rotate {
+  0% { 
+    -webkit-transform: rotate(0deg) scale(0.8); 
+    -moz-transform: rotate(0deg) scale(0.8);
+  }
+  50% { 
+    -webkit-transform: rotate(360deg) scale(1.2); 
+    -moz-transform: rotate(360deg) scale(1.2);
+  }
+  100% { 
+    -webkit-transform: rotate(720deg) scale(0.8); 
+    -moz-transform: rotate(720deg) scale(0.8);
+  }
+}
+
+@keyframes ball1 {
+  0% {
+    box-shadow: 30px 0 0 #f8b334;
+  }
+  50% {
+    box-shadow: 0 0 0 #f8b334;
+    margin-bottom: 0;
+    -webkit-transform: translate(15px,15px);
+    -moz-transform: translate(15px, 15px);
+  }
+  100% {
+    box-shadow: 30px 0 0 #f8b334;
+    margin-bottom: 10px;
+  }
+}
+
+@keyframes ball2 {
+  0% {
+    box-shadow: 30px 0 0 #97bf0d;
+  }
+  50% {
+    box-shadow: 0 0 0 #97bf0d;
+    margin-top: -20px;
+    -webkit-transform: translate(15px,15px);
+    -moz-transform: translate(15px, 15px);
+  }
+  100% {
+    box-shadow: 30px 0 0 #97bf0d;
+    margin-top: 0;
+  }
+}
+@media screen and (max-width: 501px){
+	.loader{
+		top:30%;
+		left:36%;
+	}
+}
 </style>
