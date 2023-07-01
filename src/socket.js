@@ -18,6 +18,7 @@ export const state = reactive({
   inRoom: false,
   searching: false,
   loading: false,
+  localvideo:false,
   target: null,
   clientId:null,
   frontcam: false,
@@ -140,6 +141,7 @@ export const stopRoom = async function(el){
  
 export const findNewRoom = async (data) => {
 	btnStart.disabled = true;
+	state.localvideo = true;
 	console.log("start");
 	const us=useUserStore();
 	
@@ -156,6 +158,7 @@ export const findNewRoom = async (data) => {
   
    //camToggle
     fuck.onloadedmetadata = function (ev) {
+		state.localvideo = false;
     tru=ev.target.addTextTrack("captions", "Titles", "ru");
    tru.mode="showing";
    let cue=new VTTCue(0.0,100090.9, us.user.details.details.firstname);
@@ -216,6 +219,7 @@ REMOTE.onloadedmetadata = function (ev) {
 }
 }catch (error) {
 	btnStart.disabled = false;
+	state.localvideo = false;
     console.log(error);
     alert(error);
     toast.error(error.message);

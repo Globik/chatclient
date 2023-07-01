@@ -97,6 +97,7 @@ justify-self: center;
 img.twitter{
 	object-fit:cover;
 	transform:scale(1.2,1.2);
+	z-index:-9999;
 }
 @media screen and (max-width: 501px){
 				html,body{

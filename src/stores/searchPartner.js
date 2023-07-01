@@ -12,6 +12,9 @@ export const useSearchPartner = defineStore("searchPartner", () => {
   var counta = ref(['all']);//ref(JSON.parse(Cookies.get("countries").c) || []);
 
   const toggleCountrySearch = (v) => {
+	  if(v){
+	  document.body.style.overflow="hidden";
+  }else{document.body.style.overflow="initial";}
     showCountrySearch.value = v;
   };
 

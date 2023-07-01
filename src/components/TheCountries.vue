@@ -67,7 +67,7 @@ if(light.value=="off"){
       class="search-countries fixed flex justify-center inset-0 w-full h-screen bg-black bg-opacity-60"
     >
     
-      <form id="pform" @submit.prevent class="mt-14 px-2">
+      <form id="pform" @submit.prevent clss="mt-14 px-2">
       <!--
         <div class="search-bar flex items-center">
           <div class="bg-white p-2 w-full rounded-t flex items-center">
@@ -109,30 +109,43 @@ if(light.value=="off"){
         </div>
         
         -->
+        <section class="foo">
         <div id="krestikCont"> 
-        <button
+       <button
         id="krestik"
           @click="setCountries()"
           cass="fixed right-6 top-60"
         >
           <XMarkIcon lass="w-8 h-8 ml-3 text-black"></XMarkIcon>
-        </button>
-        <p class="lands-p">Вы можете выбрать до пяти стран или все страны для поиска: </p>
-        <p class="lands-p">Выбранные страны: {{ checkedLands.length }} {{ light=="all"?"Все страны":"" }}</p>
+        </button> 
+        <section id="genderCheck">
+        <b style="padding-left:20px;">Вы кто?</b>
+        <div class="gender">
+        <label><span>Мужчина</span><input type="radio" name="gender" value="male" checked></label>
+        <label><span>Женщина</span><input type="radio" name="gender" value="female"></label>
+        </div>
+        <b style="padding-left:20px;">Кого вы ищите?</b>
+        <div class="gender">
+        <label><span>Мужчину</span><input type="radio" name="gender1" value="male"></label>
+        <label><span>Женщину</span><input type="radio" name="gender1" value="female" checked></label>
+        </div>
+        </section>
+        <hr>
+        <p class="lands-p"  style="padding-left:20px;padding-right:20px;padding-top:10px;"><b>Вы можете выбрать до пяти стран или все страны для поиска.</b></p>
         
          
          <div class="lands-c">
-         
-       <!--  <div class="one-c"> -->
+         <span>Выбранные страны: {{ checkedLands.length }}</span>
+        <div  class="one-c py-2 bg-gray-100 rounded transition hover:bg-gray-200">
          <label>
-         <span class="land-span">Все страны</span>
+         <span style="padding-left:10px;" class="land-span">Все страны</span>
          </label>
         <!-- </div> -->
         
         
         <!-- <div class="two-c"> -->
          <input 
-         id="allInput" 
+          
          type="checkbox" 
         :true-value="all"
         :false-value="off"
@@ -140,27 +153,29 @@ if(light.value=="off"){
          v-model="light"
          :checked=false
          @change="allLand();">
-        <!-- </div> -->
+        </div> 
         </div>
-         </div>
+         </div></section>
         <section id="Land">
         
          <div id="lll" v-if="light==='off'">
-         <section class="lSec"
+         <section class="lSec py-2 bg-gray-100 rounded transition hover:bg-gray-200"
          v-for="(country, index) in suggestedOnes"
-              :key="index"
+              :key="index-2"
+                
          >
         <label
-        cass="label"
-        class="flex items-center justify-start font-semibold w-full p-2 my-2 bg-gray-100 rounded transition hover:bg-gray-200"
-          
+        class="label font-semibold"
+              
                 v-if="
                   country.name !== 'name' &&
                   country.name !== 'Абхазия' &&
-                  country.name !== 'Южная Осетия' 
-                "
+                  country.name !== 'Южная Осетия' "
+                
+                :for="country.alpha1"
               >
                <img class="img-land"
+               style="padding-left:10px;"
                   v-if="
                   country.name !== 'name' &&
                   country.name !== 'Абхазия' &&
@@ -171,14 +186,16 @@ if(light.value=="off"){
                   :title="country.english"
                 />
               <span class="land-span"
+               style="padding-left:10px;"
                v-if="
                   country.name !== 'name' &&
                   country.name !== 'Абхазия' &&
                   country.name !== 'Южная Осетия' 
                 "
               >{{ country.name }}</span>
+              </label>
         <input 
-        class=""
+        class="input"
          v-if="
                   country.name !== 'name' &&
                   country.name !== 'Абхазия' &&
@@ -187,11 +204,11 @@ if(light.value=="off"){
         type="checkbox" 
         v-model="checkedLands" 
         :value="country.alpha1"
-       
+       :id="country.alpha1"
         @change="checkLand();"
         
         >
-         </label>
+         
          </section>
          </div>
          <div id="emptyLand" v-else><p class="lands-p">Вы можете выбрать конкретные страны, сняв галочку</p></div>
@@ -204,6 +221,7 @@ if(light.value=="off"){
           <XMarkIcon class="w-8 h-8 ml-3 text-white"></XMarkIcon>
         </button>
       </form>
+      
     </div>
   </transition>
 </template>
@@ -214,17 +232,58 @@ if(light.value=="off"){
 <!--  -->
 <style scoped>
 #landWrapper, #pform{
-	adding:10px;
-	margin:10px;
+
+}
+#genderCheck{
+border-radius:10px;
+padding-top:10px;
+padding-bottom:10px;	
+}
+.gender{
+	display:grid;
+	grid-template-columns: 1fr 1fr;
+	border-radius:10px;
+	
+	
+}
+.gender label{
+	display:flex;
+	align-items:center;
+	
+    jutify-content:center;
+  
+    width:100%;
+    
+}
+.gender span{
+margin-left:20px;
+	flex:auto;
+}
+.gender input{
+display:inline;
+width:120px;
+justify-self:start;
+	mrgin-left:1.1em;
+}
+section.foo{
+	background:white;
+	border-radius:10px;
 
 }
 #krestikCont{
 	position:relative;
+	pdding-left:25px;
+	pdding-right:20px;
+	mrgin:5px;
+}
+#genderCheck{
+	background:white;
 }
 .countries {
   overflow-y: scroll;
   min-width: 360px;
-  max-height: 500px;
+  ma-height: auto;
+  hight:100%;
   background: white;
   display: flex;
   flex-direction: column;
@@ -233,58 +292,84 @@ if(light.value=="off"){
 
 p {
   overflow: hidden;
-  border:1px solid red;
-  idth: 20ic;
+
+ 
 }
 
 .countries::-webkit-scrollbar {
   width: 0;
 }
+
+#pform{
+border-radius:10px;
+bckground:white;
+height:30%;
+margin-top:10vh;
+}
 #Land{
-
-
-	overflow-y: scroll;
+overflow-y: scroll;
 	min-width: 100%;
   max-height: 500px;
+ border-bottom-left-radius:10px;
+ border-bottom-right-radius:10px;
   background: white;
-  display: flex;
-  flex-direction: column;
+  
+  padding-right:20px;
+  padding-left:20px;
+}
+.lSec:first-of-type, .lSec:nth-of-type(2){
+	display:none;
+}
+
+section.lSec{
+	display:grid;
+	grid-template-columns: auto 50px;
+	margin-top:3px;
+	margin-bottom:3px;
+}
+section.lSec .label{
+align-self:center;
+	display:flex;
+
+	align-items:center;
 }
 .land-span{
-	margin-left:10px;
-}
-.label{
-	width:50%;
-	display:inline-block;
+	mrgin-left:10px;
 }
 .img-land{
+
+disolay:inline-block;
 	width:40px;
 }
 #Land div, #emptyLand{width:100%;}
 #Land::-webkit-scrollbar {
 width: 0;	
 }
-input[type=checkbox]{
-	
+.input[type=checkbox]{
+
 	width:30px;
 	height:30px;
-	margin-left: 40px;
+
+	align-self:center;
+	justify-self:center;
 }
 .lands-p{
 	background:white;
 	color:black;
-	padding:20px;
+	padding:0px;
 }
 #krestik{
 	z-index:999;
 	display:inline-block;
+	border-radius:50%;
 	position:absolute;
-	color:green;
-	background:red;
+	color:gray;
+	ackground:red;
 	top:2px;
 	right:2px;
 	width:40px;
 	height:40px;
+	loat:right;
 }
 #krestik img{
 	width:30px;
@@ -293,53 +378,71 @@ input[type=checkbox]{
 	
 }
 
+
 div.lands-c{
 	display:grid;
 	background:white;
-	grid-template-columns: 50% auto;
-	padding:0;
-	margin:0;
+	align-self:center;
+	grid-template-columns: 200px auto;
+	padding-left:20px;
+	padding-right:20px;
+	margin-top:15px;
+}
+.one-c{
+	align-self:center;
+	display:grid;
+	grid-template-columns: auto 35px;
+}
+div.lands-c span{
+	align-self:center;
+	justify-self:start;
+	
 }
 div.lands-c label{
-	border:1px solid red;
+
 	align-self: center;
 	margin-bottom:0;
 	width:100%;
+	flex:auto;
+	
 }
 
-div.lands-c input{
+div.one-c input{
 	align-self:center;
-	justify-self:end;
+transform:translateX(-5px);
 	margin:0;
-	padding:0;
+	adding-left:40px;
+	width:30px;
+	height:30px;
+	
 }
-@media screen and (max-width: 390px) and (orientation: portrait){
-	.lands-p{
-	ackground:black;
-	padding:0.1em;
+
+
+@media screen and (max-width: 501px) and (orientation: portrait){
+	
+.input[type=checkbox]{
+	
+	width:30px;
+	height:30px;
+}
+#pform{
+	
+		height:auto;
 	}
-	#landWrapper, #pform{
-	padding:3px;
-}
-input[type=checkbox]{
-	borer:1px solid red;
-	wih:60px;
-}
+	#Land{
+	max-height:50%;
+	
+	}
 }
 @media screen and (max-height: 547px) and (orientation: landscape){
-	.lands-p{
-		ackground: red;
-		padding:0.1em;
+	#pform{
+	
+		height:60%;
+		margin-top:0;
 	}
-	#landWrapper, #pform{
-	padding:3px;margin-top:0;
-}
-#krestik{
-	z-index:999;
-	display:block;
-	position:relative;
-	color:red;
-	background:red;
-}
+	#Land{
+	max-height:75%;
+	
+	}
 	}
 </style>

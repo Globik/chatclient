@@ -14,6 +14,8 @@ import { useToast } from "vue-toastification";
 
 import { ref } from "vue";
 import TheCountries from "./TheCountries.vue";
+import revolverSpinner from "./revolverSpinner.vue";
+import sharikSpinner from "./sharikSpinner.vue";
 import { useSearchPartner } from "../stores/searchPartner";
 import { useChatStore } from "../stores/chat";
 import { useUserStore } from "../stores/user";
@@ -133,7 +135,7 @@ onBeforeUnmount(async ()=>{
 <template>
 <div id="logoutDiv">
 <div class="logout-item">
-<button title="выход" id="btnLogout" @click="logout()"><span>Выход</span>
+<button id="btnLogout" @click="logout()"><span>Выход</span>
 
 </button>
 </div></div>
@@ -158,7 +160,10 @@ onBeforeUnmount(async ()=>{
       <div
         class="max-h-[682px] relative xl:h-[990px] xl:aspect-auto aspect-square screen_first  videocontainer"
       >
-      <div class="loader" :class="{'unspinner':!state.searching}"></div>
+     <div id="cloader" :class="{'unspinner':!state.searching}">
+   
+     <revolverSpinner></revolverSpinner>
+     </div>
         <video
           ref="remoteStreamRef"
           id="REMOTE"
@@ -172,7 +177,7 @@ onBeforeUnmount(async ()=>{
           class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-red hover:opacity-100 top-4 right-4 excl"
         ></ExclamationCircleIcon>
 
-        <div
+        <div style="display:grid;grid-template-columns: 1fr 1fr;width:100%;position:absolute;bottom:0;align-items:center; jutify-content:start;"
           class="absolute bottom-0 flex w-full p-2 space-x-4 transition opacity-0 bg-[#0000007e] controller hover:opacity-100"
         >
           <!-- should be binded  -->
@@ -183,11 +188,11 @@ onBeforeUnmount(async ()=>{
             ></SpeakerWaveIcon>
             <SpeakerXMarkIcon
               v-else
-              class="w-6 h-6 transitio fill-gray-400 hover:fill-white mx-2"
+              class="w-6 h-6 transitionfill-gray-400 hover:fill-white mx-2"
             ></SpeakerXMarkIcon>
           </button>
-          <button title="во весь экран" class="hover:fill-white">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:fill-white fill-white-400 ">
+          <button id="fullscreen" title="во весь экран" style="justify-self:end;" class="">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
 </svg>
 
@@ -205,6 +210,9 @@ onBeforeUnmount(async ()=>{
       <div
         class="relative max-h-[682px] xl:h-[990px] xl:aspect-auto aspect-square screen_second  videocontainer"
       >
+      <div id="cloader2" :class="{'unspinner': !state.localvideo}">
+      <sharikSpinner></sharikSpinner>
+      </div>
         <video
           autoplay
           muted
@@ -324,6 +332,10 @@ onBeforeUnmount(async ()=>{
 </template>
 
 <style scoped>
+#fullscreen:hover svg{
+ stroke:white;
+
+}
 #logoutDiv{
 	display:flex;
 	 flex-wrap: wrap;
@@ -354,6 +366,7 @@ padding:10px;
 }
 .first.videocontainer{
 	position:relative;
+	display:flex;
 }
 .videocontainer{
 	background:rgba(138,231,197,0.34);
@@ -719,90 +732,19 @@ border-bottom-right-radius: 0.5rem;
 				}
 				
 				/* loader */
-				
-				
-.loader  {
-  animation: rotate 1s infinite;  
-  height: 50px;
-  width: 50px;
-  position:absolute;
-  top:39.5%;
-  left:48%;
-  display:block;
-}
-.loader.unspinner{
+	#cloader, #cloader2{
+		position:absolute;
+		top:0;
+		left:0;
+		width:100%;
+		height:100%;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		background: #262E2A;
+	}	
+	
+#cloader.unspinner, #cloader2.unspinner{
 	display:none;
-}
-.loader:before,
-.loader:after {   
-  border-radius: 50%;
-  content: '';
-  display: block;
-  height: 20px;  
-  width: 20px;
-}
-.loader:before {
-  animation: ball1 1s infinite;  
-  background-color: #cb2025;
-  box-shadow: 30px 0 0 #f8b334;
-  margin-bottom: 10px;
-}
-.loader:after {
-  animation: ball2 1s infinite; 
-  background-color: #00a096;
-  box-shadow: 30px 0 0 #97bf0d;
-}
-
-@keyframes rotate {
-  0% { 
-    -webkit-transform: rotate(0deg) scale(0.8); 
-    -moz-transform: rotate(0deg) scale(0.8);
-  }
-  50% { 
-    -webkit-transform: rotate(360deg) scale(1.2); 
-    -moz-transform: rotate(360deg) scale(1.2);
-  }
-  100% { 
-    -webkit-transform: rotate(720deg) scale(0.8); 
-    -moz-transform: rotate(720deg) scale(0.8);
-  }
-}
-
-@keyframes ball1 {
-  0% {
-    box-shadow: 30px 0 0 #f8b334;
-  }
-  50% {
-    box-shadow: 0 0 0 #f8b334;
-    margin-bottom: 0;
-    -webkit-transform: translate(15px,15px);
-    -moz-transform: translate(15px, 15px);
-  }
-  100% {
-    box-shadow: 30px 0 0 #f8b334;
-    margin-bottom: 10px;
-  }
-}
-
-@keyframes ball2 {
-  0% {
-    box-shadow: 30px 0 0 #97bf0d;
-  }
-  50% {
-    box-shadow: 0 0 0 #97bf0d;
-    margin-top: -20px;
-    -webkit-transform: translate(15px,15px);
-    -moz-transform: translate(15px, 15px);
-  }
-  100% {
-    box-shadow: 30px 0 0 #97bf0d;
-    margin-top: 0;
-  }
-}
-@media screen and (max-width: 501px){
-	.loader{
-		top:30%;
-		left:36%;
-	}
-}
+}		
 </style>
