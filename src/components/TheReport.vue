@@ -8,7 +8,7 @@ const image = ref();
 
 const emits = defineEmits(["closeReport"]);
 
-const target = document.body;
+const target = REMOTE;//document.body;
 
 const capture = () => {
   html2canvas(target).then((canvas) => {

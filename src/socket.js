@@ -103,8 +103,8 @@ alert("your browser navigator.mediaDevices not supported")
 	camToggleRef.value = camToggle;
 	screenBtnRef.value = screenBtn;
 	btnStartRef.value = btnStart;
-	const chatStore = useChatStore();
-	await chatStore.pushMessage({name: "width:height", text: window.innerWidth+":"+window.innerHeight});
+//	const chatStore = useChatStore();
+//	await chatStore.pushMessage({name: "width:height", text: window.innerWidth+":"+window.innerHeight});
 navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(function(err){console.error(err)});
 }
 }
