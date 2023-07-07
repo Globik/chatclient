@@ -342,7 +342,7 @@ const createOffer = async(target, from)=>{
  const stopStream = ()=>{
 	 if(localStream.value){
 		localStream.value.getTracks().forEach(function(track){
-			//track.stop();
+			track.stop();
 		});
  }
 }
