@@ -103,7 +103,7 @@ const screenEnded = new Event("screenended", { cancelable: false });
 			  sender.replaceTrack(screenTrack);
 		  }	  
 	  }catch(e){
-		  toast.error(e);
+		 // toast.error(e);
 		  throw e;
 	  }
   }

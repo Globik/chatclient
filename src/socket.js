@@ -395,7 +395,7 @@ export const screensharing = async()=>{
 	try{
 		await chatStore.doSharing();
 	}catch(e){
-		toast.error(e);
+		toast.error("Ваш браузер не поддерживает скрин-шэринг!");
 		await toggleCamera();
 		return;
 	}

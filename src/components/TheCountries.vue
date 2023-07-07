@@ -143,12 +143,12 @@ const setSuechGender = ()=>{
           <XMarkIcon lass="w-8 h-8 ml-3 text-black"></XMarkIcon>
         </button> 
         <section id="genderCheck">
-        <b style="padding-left:20px;">Вы кто? {{picked}}</b>
+        <b style="padding-left:20px;">Вы кто?</b>
         <div class="gender">
         <label><span>Мужчина</span><input type="radio" name="gender" value="male" v-model="picked" @change="setGender()"></label>
         <label><span>Женщина</span><input type="radio" name="gender" value="female" v-model="picked" @change="setGender()"></label>
         </div>
-        <b style="padding-left:20px;">Кого вы ищите? {{picked2}}</b>
+        <b style="padding-left:20px;">Кого вы ищите?</b>
         <div class="gender">
         <label><span>Мужчину</span><input type="radio" name="gender1" value="male" v-model="picked2" @change="setSuechGender()"></label>
         <label><span>Женщину</span><input type="radio" name="gender1" value="female" v-model="picked2" @change="setSuechGender()"></label>
@@ -499,6 +499,8 @@ transform:translateX(-5px);
 		height:100%;
 	}
 	}
+	
+	/* ideal for 320x442 */
 	@media screen and (max-width: 384px) and (orientation: portrait){
 	.krestikSuka{
 		color:rgb(250,240,190);
@@ -516,9 +518,15 @@ transform:translateX(-5px);
 	}
 	.gender{
 		display:block;
+		margin-top:2vw;
+		margin-bottom:1vw;
+	}
+	.gender label{
+		margin-top:4vw;
+		margin-bottom:4vw;
 	}
 		div.one-c{
-		background:green;
+		ackground:green;
 	}
 	div.lands-c{
 		display:block;

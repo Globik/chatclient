@@ -679,12 +679,12 @@ border-bottom-right-radius: 0.5rem;
 .msgs:before{
 	content:"чат";
 	position:absolute;
-	background:rgba(24,23,4,0.3);
+	background:rgba(24,23,4,0.1);
 	top:0;
 	left:45%;
 	padding:0.1em;
 	font-size:0.9em;
-	color:black;
+	color:rgba(0,0,0,0.4);
 	line-height:1.2;
 }
 .msgs{
