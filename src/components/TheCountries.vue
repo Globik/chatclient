@@ -6,7 +6,7 @@ import countries from "../storage/countries.json";
 import { ref } from "vue";
 import { computed } from "@vue/reactivity";
 import { onMounted, onUnmounted, onBeforeUnmount } from "vue";
-
+const emits = defineEmits(["closeCountry"]);
 const searchPartner = useSearchPartner();
 const term = ref("");
 var checkedLands;
@@ -50,6 +50,7 @@ const setCountries = ()=>{
 
 searchPartner.setCountries(checkedLands.value);
   searchPartner.toggleCountrySearch(false);
+   emits("closeCountry", false);
 }
 
 function checkLand(){
@@ -87,6 +88,7 @@ const setSuechGender = ()=>{
  <!-- <transition name="fade" mode="out-in"> -->
   
     <div id="landWrapper"
+    @click.self="setCountries()"
       v-if="searchPartner.showCountrySearch"
       class="search-countries fixed flex justify-center inset-0 w-full h-screen bg-black bg-opacity-60"
     >
@@ -485,6 +487,33 @@ transform:translateX(-5px);
 	
 	}
 	}
+	
+	
+	
+	
+	/* planshet 451x641      */
+	
+	@media screen and (max-width: 452px) and (orientation: portrait){
+		#pform{
+			height:100%;
+		
+		}
+		#Land{
+	max-height:100%;
+	
+	}
+	}
+	@media screen and (max-height: 642px) and (orientation: landscape){
+		#pform{
+			height:100%;
+		
+		}
+		#Land{
+	max-height:100%;
+	
+	}
+	}
+	
 	/* 285 x 567 */
 	@media screen and (max-height: 286px) and (orientation: landscape){
 	.krestikSuka{
@@ -499,6 +528,8 @@ transform:translateX(-5px);
 		height:100%;
 	}
 	}
+	
+	
 	
 	/* ideal for 320x442 */
 	@media screen and (max-width: 384px) and (orientation: portrait){

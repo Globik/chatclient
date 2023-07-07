@@ -85,15 +85,72 @@ const toggleReport = () => {
 </template>
 
 <style scoped>
-@media screen and (max-height: 286px) and (orientation: landscape){
-.register-form{
+
+
+/* planshet 451x641      */
+	
+	@media screen and (max-width: 452px) and (orientation: portrait){
+	.register-form{
 	overflow:auto;
-	ackground:red;
+	
+	width:99vw;
+	font-size:4vw;
+}
+.screenshot{
+	
+	width:50%;
+	height:50%;
+	overflow:auto;
+}
+.screenshot img{
+	width:100%;
+	height:100%;
+	overflow:auto;
+}
+.form-reason{
+	dsplay:block;
+
+}
+	}
+	
+	@media screen and (max-height: 642px) and (orientation: landscape){
+		.register-form{
+	overflow:auto;
+	
 	width:99vw;
 	font-size:2.5vw;
 }
 .screenshot{
-	ackground:green;
+
+	width:50%;
+	height:50%;
+	overflow:auto;
+}
+.screenshot img{
+	width:100%;
+	height:100%;
+	overflow:auto;
+}
+		
+	}
+
+
+
+
+
+
+
+
+
+@media screen and (max-height: 286px) and (orientation: landscape){
+.register-form{
+	overflow:auto;
+	
+	width:99vw;
+	font-size:2.5vw;
+}
+.screenshot{
+
 	width:50%;
 	height:50%;
 	overflow:auto;
@@ -108,12 +165,12 @@ const toggleReport = () => {
 @media screen and (max-width: 384px) and (orientation: portrait){
 .register-form{
 	overflow:auto;
-	ackground:red;
+	
 	width:99vw;
 	font-size:4vw;
 }
 .screenshot{
-	ackground:green;
+	
 	width:50%;
 	height:50%;
 	overflow:auto;
@@ -125,7 +182,7 @@ const toggleReport = () => {
 }
 .form-reason{
 	dsplay:block;
-	ackground:yellow;
+	
 }
 }
 </style>

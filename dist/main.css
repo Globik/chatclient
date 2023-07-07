@@ -125,6 +125,25 @@ padding-right:2px;
  align-items: center;
 }
 }
+
+
+/* planshet 451x641      */
+	
+	@media screen and (max-width: 452px) and (orientation: portrait){
+		#mainfooter{
+		padding-bottom:40px;
+	}
+	}
+	@media screen and (max-height: 642px) and (orientation: landscape){
+		article#introduce{
+		width:100%
+	}
+	}
+
+
+
+
+
 	@media screen and (max-height: 286px) and (orientation: landscape){
 	html,body{
 	/*	-webkit-text-size-adjust:none;

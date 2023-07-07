@@ -23,7 +23,7 @@ import { state, findNewRoom, stopRoom, getDevice, toggleCamera, screensharing } 
 import TheEmojiPicker from "./TheEmojiPicker.vue";
 import Cookies from "js-cookie";
 import { socket } from "../socket";
-
+//const emits2 = defineEmits(["closeMenu"]);
 const chatStore = useChatStore();
 const searchPartnerStore = useSearchPartner();
 const userStore = useUserStore();
@@ -39,7 +39,7 @@ const localStreamRef = ref(null);
 const remoteStreamRef = ref(null);
 const camToggleRef = ref(null);
 
-const emits = defineEmits(["toggleReportEvent"]);
+const emits = defineEmits(["toggleReportEvent","closeMenu"]);
 
 const toggleReport = () => {
   reportVisible.value = !reportVisible.value;
@@ -60,9 +60,11 @@ const toggleSound = () => {
 
 const toggleMenu = () =>{
 	state.isShow = !state.isShow;
-	
+//	emits("closeMenu",state.isShow);
 }
-
+document.body.onclick=function(ev){
+	//toggleMenu();
+}
 const toggleScreen = () =>{
 	if(!remoteStreamRef.value.fullScreenElement){
 		remoteStreamRef.value.requestFullscreen();
@@ -149,7 +151,7 @@ onBeforeUnmount(async ()=>{
 
 </button>
 </div></div>
-  <div class="w-full" @click="dofuck">
+  <div class="w-full" >
   <div id="topPanel">
   
   <div id="countcontainer"><span class="online-now it">Онлайн: </span><span class="it" id="userCount">{{state.counts}}</span></div>
@@ -730,10 +732,62 @@ border-bottom-right-radius: 0.5rem;
 	
 				}
 				
+				
+				
+				
+	/* planshet 451x641      */
+	
+	@media screen and (max-width: 452px) and (orientation: portrait){
+			button.panel-btn{
+					font-size:4.5vw;
+				}
+				button.panel-btn:before{
+					top:1px;
+					box-shadow:none;
+					}
+					button.panel-btn:active:not(:disabled){
+  top: 1px;
+  box-shadow:none;
+  }
+  
+  .complainznak{
+	 top:1px;
+	 right:1px;
+ }
+	}
+	@media screen and (max-height: 642px) and (orientation: landscape){
+		#underpanel{
+		
+				width:100%;
+				
+			}	
+				button.panel-btn{
+					font-size:5.5vh;
+				}
+				button.panel-btn:before{
+					top:1px;
+					box-shadow:none;
+					height:44px;
+					}
+					button.panel-btn:active:not(:disabled){
+  top: 1px;
+  box-shadow:none;
+  }
+  video{
+	
+			background-size: 90%;
+			}
+	}
+				
+				
+				
+				
+				
+				
 	/* 285 x 567 */
 	@media screen and (max-height: 286px) and (orientation: landscape){
 	#underpanel{
-				ackground:red;
+		
 				width:100%;
 				
 			}	
