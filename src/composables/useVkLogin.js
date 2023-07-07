@@ -6,6 +6,7 @@ import axios from "axios";
 
 
 export const useVkLogin = () => {
+	
   // important urls to access user's info
   const rootUrl = ` https://oauth.vk.com/authorize`;
   const getUserUrl = `https://api.vk.com/method/users.get`;
@@ -50,7 +51,7 @@ VK.init({apiId: options.client_id});
         } else {
           return;
         }
-      }, 1);
+      }, 0.1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
@@ -84,6 +85,7 @@ console.log(result.value)
         }
       );
       */
+      
  //user = await auth.post(`/vk-user`, { vkurl: getUserUrl, access_token: result.value.access_token, user_ids:result.value.user_id, head:"bla"});
  function getUserData2(url, obj){
 	 return new Promise(function(res, rej){
@@ -132,16 +134,16 @@ console.log(result.value)
 
       await searchPartner.setLoading(false);
     
-     setTimeout(function(){
+   //  setTimeout(function(){
 		  window.close();
-	  }, 1);
+	//  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
       alert(error);
-       setTimeout(function(){
+     //  setTimeout(function(){
 		 window.close();
-	  }, 1);
+	//  }, 1);
     }
   };
 
@@ -150,4 +152,5 @@ console.log(result.value)
     vkLogin,
     getUserData,
   };
+   
 };

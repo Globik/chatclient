@@ -24,13 +24,14 @@ const toggleReport = () => {
 };
 </script>
 <template>
-  <transition name="fade" mode="out-in">
+
     <div
       @click.self="toggleReport"
       class="fixed inset-0 z-50 flex flex-col items-center justify-center h-screen bg-black register-comp bg-opacity-70"
     >
       <form
         class="register-form bg-white rounded relative border p-4 w-[400px]"
+        lass="register-form bg-white rounded relative border p-4 w-full h-[99vh]"
       >
         <div class="flex justify-end x-mark">
           <XMarkIcon
@@ -56,7 +57,7 @@ const toggleReport = () => {
           </div>
           <div class="flex space-x-4 form-screenshot">
             <p class="font-semibold text-md">Скриншот:</p>
-            <div class="scrrenshot">
+            <div class="screenshot">
               <img ref="image" alt="screenshot" />
             </div>
           </div>
@@ -80,17 +81,51 @@ const toggleReport = () => {
         </div>
       </form>
     </div>
-  </transition>
+
 </template>
 
-<style>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
+<style scoped>
+@media screen and (max-height: 286px) and (orientation: landscape){
+.register-form{
+	overflow:auto;
+	ackground:red;
+	width:99vw;
+	font-size:2.5vw;
+}
+.screenshot{
+	ackground:green;
+	width:50%;
+	height:50%;
+	overflow:auto;
+}
+.screenshot img{
+	width:100%;
+	height:100%;
+	overflow:auto;
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+}
+@media screen and (max-width: 286px) and (orientation: portrait){
+.register-form{
+	overflow:auto;
+	ackground:red;
+	width:99vw;
+	font-size:4vw;
+}
+.screenshot{
+	ackground:green;
+	width:50%;
+	height:50%;
+	overflow:auto;
+}
+.screenshot img{
+	width:100%;
+	height:100%;
+	overflow:auto;
+}
+.form-reason{
+	dsplay:block;
+	ackground:yellow;
+}
 }
 </style>

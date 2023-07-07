@@ -5,14 +5,32 @@ import { useSearchPartner } from "../stores/searchPartner";
 import countries from "../storage/countries.json";
 import { ref } from "vue";
 import { computed } from "@vue/reactivity";
+import { onMounted, onUnmounted, onBeforeUnmount } from "vue";
 
 const searchPartner = useSearchPartner();
 const term = ref("");
-const checkedLands = ref([]);
-const light = ref("off");
-const allL = ref("");
-var all = ref("all");
-var off =ref("off");
+var checkedLands;
+//alert(localStorage.getItem("countries"))
+//localStorage.clear();
+if(localStorage.getItem("countries") !=null){
+
+checkedLands  = ref(JSON.parse(localStorage.getItem("countries")).countries);
+}else{
+	checkedLands = ref(["all"]);
+}
+//const light = ref("on");
+//alert(searchPartner.gender)
+var picked, picked2 ;
+if(localStorage.getItem("yourgender") !=null){
+	picked = ref(localStorage.getItem("yourgender"));
+}else{
+	picked = ref(searchPartner.gender);
+}
+if(localStorage.getItem("suechgender") !=null){
+	picked2 = ref(localStorage.getItem("suechgender"));
+}else{
+picked2 = ref("female");
+}
 
 const suggestedOnes = computed(() => {
   return countries.filter((country) => {
@@ -29,38 +47,44 @@ const setCountry = (code) => {
   searchPartner.toggleCountrySearch(false);
 };
 const setCountries = ()=>{
-//alert(checked)
-if(checkedLands.value.length == 0){
-	checkedLands.value = ["all"];
-}
+
 searchPartner.setCountries(checkedLands.value);
   searchPartner.toggleCountrySearch(false);
 }
-function checki(){
-	if(checkedLands.value[0]=="all"){
-		checkedLands.value=[];
-	}
-	//checkedLands.value=checkedLands.value;
-}
+
 function checkLand(){
 
-	if(checkedLands.value.length >= 5){
-	searchPartner.toggleCountrySearch(false);
-		return;
+	
+	let l = checkedLands.value.some(function(el,i){
+
+	return	el == "all";
+	})
+
+	if(l){
+		checkedLands.value.splice(0, 1)
 	}
 	
-}
+	if(checkedLands.value.length == 0) checkedLands.value = ["all"];
+	searchPartner.setCountries(checkedLands.value);
+	}
+
 const allLand = ()=>{
-lll.innerHTML="";
-checkedLands.value = ["all"];
-if(light.value=="off"){
-	checkedLands.value = [];
-}
+
+	checkedLands.value = ["all"];
+	searchPartner.setCountries(checkedLands.value);
+
 };
+
+const setGender = ()=>{
+	searchPartner.setGender(picked.value);
+}
+const setSuechGender = ()=>{
+	searchPartner.setSuechGender(picked2.value);
+}
 </script>
 
 <template>
-  <transition name="fade" mode="out-in">
+ <!-- <transition name="fade" mode="out-in"> -->
   
     <div id="landWrapper"
       v-if="searchPartner.showCountrySearch"
@@ -119,19 +143,19 @@ if(light.value=="off"){
           <XMarkIcon lass="w-8 h-8 ml-3 text-black"></XMarkIcon>
         </button> 
         <section id="genderCheck">
-        <b style="padding-left:20px;">Вы кто?</b>
+        <b style="padding-left:20px;">Вы кто? {{picked}}</b>
         <div class="gender">
-        <label><span>Мужчина</span><input type="radio" name="gender" value="male" checked></label>
-        <label><span>Женщина</span><input type="radio" name="gender" value="female"></label>
+        <label><span>Мужчина</span><input type="radio" name="gender" value="male" v-model="picked" @change="setGender()"></label>
+        <label><span>Женщина</span><input type="radio" name="gender" value="female" v-model="picked" @change="setGender()"></label>
         </div>
-        <b style="padding-left:20px;">Кого вы ищите?</b>
+        <b style="padding-left:20px;">Кого вы ищите? {{picked2}}</b>
         <div class="gender">
-        <label><span>Мужчину</span><input type="radio" name="gender1" value="male"></label>
-        <label><span>Женщину</span><input type="radio" name="gender1" value="female" checked></label>
+        <label><span>Мужчину</span><input type="radio" name="gender1" value="male" v-model="picked2" @change="setSuechGender()"></label>
+        <label><span>Женщину</span><input type="radio" name="gender1" value="female" v-model="picked2" @change="setSuechGender()"></label>
         </div>
         </section>
         <hr>
-        <p class="lands-p"  style="padding-left:20px;padding-right:20px;padding-top:10px;"><b>Вы можете выбрать до пяти стран или все страны для поиска.</b></p>
+        <p class="lands-p"  style="padding-left:20px;padding-right:20px;padding-top:10px;"><b>Вы можете выбрать страны для поиска.</b></p>
         
          
          <div class="lands-c">
@@ -145,20 +169,18 @@ if(light.value=="off"){
         
         <!-- <div class="two-c"> -->
          <input 
-          
+          id="allLandCheck"
          type="checkbox" 
-        :true-value="all"
-        :false-value="off"
+        v-model="checkedLands" 
          value="all" 
-         v-model="light"
-         :checked=false
+        
          @change="allLand();">
         </div> 
         </div>
          </div></section>
         <section id="Land">
         
-         <div id="lll" v-if="light==='off'">
+         <div id="lll">
          <section class="lSec py-2 bg-gray-100 rounded transition hover:bg-gray-200"
          v-for="(country, index) in suggestedOnes"
               :key="index-2"
@@ -202,6 +224,7 @@ if(light.value=="off"){
                   country.name !== 'Южная Осетия' 
                 "
         type="checkbox" 
+        
         v-model="checkedLands" 
         :value="country.alpha1"
        :id="country.alpha1"
@@ -211,19 +234,19 @@ if(light.value=="off"){
          
          </section>
          </div>
-         <div id="emptyLand" v-else><p class="lands-p">Вы можете выбрать конкретные страны, сняв галочку</p></div>
+       <!--  <div id="emptyLand" v-else><p class="lands-p">Вы можете выбрать конкретные страны, сняв галочку</p></div> -->
         </section>
         <button
         id="krestik2"
           @click="setCountries()"
           class="fixed right-6 top-6"
         >
-          <XMarkIcon class="w-8 h-8 ml-3 text-white"></XMarkIcon>
+          <XMarkIcon class="w-8 h-8 ml-3 text-white krestikSuka"></XMarkIcon>
         </button>
       </form>
       
     </div>
-  </transition>
+ <!-- </transition> -->
 </template>
 
 
@@ -231,6 +254,7 @@ if(light.value=="off"){
 
 <!--  -->
 <style scoped>
+
 #landWrapper, #pform{
 
 }
@@ -238,6 +262,10 @@ if(light.value=="off"){
 border-radius:10px;
 padding-top:10px;
 padding-bottom:10px;	
+background:rgb(250,240,190);
+display:block;
+position:relative;
+z-idex:9999;
 }
 .gender{
 	display:grid;
@@ -276,9 +304,7 @@ section.foo{
 	pdding-right:20px;
 	mrgin:5px;
 }
-#genderCheck{
-	background:white;
-}
+
 .countries {
   overflow-y: scroll;
   min-width: 360px;
@@ -291,7 +317,7 @@ section.foo{
 }
 
 p {
-  overflow: hidden;
+  overflow:hidden;
 
  
 }
@@ -303,8 +329,12 @@ p {
 #pform{
 border-radius:10px;
 bckground:white;
-height:30%;
+height:vh;
 margin-top:10vh;
+overflow-x:auto;
+z-inex:10;
+display:block;
+position:relative;
 }
 #Land{
 overflow-y: scroll;
@@ -313,7 +343,9 @@ overflow-y: scroll;
  border-bottom-left-radius:10px;
  border-bottom-right-radius:10px;
   background: white;
-  
+  display:block;
+  position:relative;
+  z-index:1000;
   padding-right:20px;
   padding-left:20px;
 }
@@ -365,8 +397,8 @@ width: 0;
 	position:absolute;
 	color:gray;
 	ackground:red;
-	top:2px;
-	right:2px;
+	top:4px;
+	right:10px;
 	width:40px;
 	height:40px;
 	loat:right;
@@ -419,6 +451,10 @@ transform:translateX(-5px);
 
 
 @media screen and (max-width: 501px) and (orientation: portrait){
+.krestikSuka{
+		color:rgb(250,240,190);
+		display:none;
+	}
 	
 .input[type=checkbox]{
 	
@@ -426,7 +462,7 @@ transform:translateX(-5px);
 	height:30px;
 }
 #pform{
-	
+	margin-top:0;
 		height:auto;
 	}
 	#Land{
@@ -435,6 +471,10 @@ transform:translateX(-5px);
 	}
 }
 @media screen and (max-height: 547px) and (orientation: landscape){
+.krestikSuka{
+		color:rgb(250,240,190);
+		display:none;
+	}
 	#pform{
 	
 		height:60%;
@@ -443,6 +483,45 @@ transform:translateX(-5px);
 	#Land{
 	max-height:75%;
 	
+	}
+	}
+	/* 285 x 567 */
+	@media screen and (max-height: 286px) and (orientation: landscape){
+	.krestikSuka{
+		color:rgb(250,240,190);
+		display:none;
+	
+	}
+	div.one-c{
+		ackground:red;
+	}
+	#pform{
+		height:100%;
+	}
+	}
+	@media screen and (max-width: 286px) and (orientation: portrait){
+	.krestikSuka{
+		color:rgb(250,240,190);
+		display:none;
+	}
+	#pform{
+		-webkit-text-size-adjust:none;
+		text-size-adjust:none;
+		font-size:4vw;
+	}
+	#genderCheck{
+		
+		max-height: 100px;
+		overflow:auto;
+	}
+	.gender{
+		display:block;
+	}
+		div.one-c{
+		ackground:green;
+	}
+	div.lands-c{
+		display:block;
 	}
 	}
 </style>

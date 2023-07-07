@@ -19,7 +19,7 @@ import sharikSpinner from "./sharikSpinner.vue";
 import { useSearchPartner } from "../stores/searchPartner";
 import { useChatStore } from "../stores/chat";
 import { useUserStore } from "../stores/user";
-import { state, findNewRoom, stopRoom, getDevice, toggleCamera } from "../socket";
+import { state, findNewRoom, stopRoom, getDevice, toggleCamera, screensharing } from "../socket";
 import TheEmojiPicker from "./TheEmojiPicker.vue";
 import Cookies from "js-cookie";
 import { socket } from "../socket";
@@ -59,11 +59,17 @@ const toggleSound = () => {
 
 
 const toggleMenu = () =>{
-	isShow.value = !isShow.value;
-}
-function dofuck(){
+	state.isShow = !state.isShow;
 	
 }
+
+const toggleScreen = () =>{
+	if(!remoteStreamRef.value.fullScreenElement){
+		remoteStreamRef.value.requestFullscreen();
+	}
+}
+function dofuck(){}
+
 const logout = () => {
 	userStore.removeToken();
 	window.location.reload();
@@ -81,29 +87,32 @@ const findRoomArgs = reactive({
   gender: searchPartnerStore.gender,
   country: +searchPartnerStore.countryIndex,
   userId: Cookies.get("user") ? JSON.parse(Cookies.get("user")).details.userId : "",
-  countries:searchPartnerStore.counta,//JSON.parse(Cookies.get("countries")).c,
+  countries:searchPartnerStore.counta,
   nick: nick,
+  mygender: searchPartnerStore.mygender,
+  suechgender: searchPartnerStore.suechgender,
+  flag: `https://flagcdn.com/w40/${searchPartnerStore.country.toLowerCase()}.webp`,
 });
 //console.log("screen ", searchPartnerStore.counta)
   const sendMessage = async () => {
   console.log(`Message: `, message.value);
   console.log(`Room: `, chatStore.roomDetails.connected);
   if (!message.value || !chatStore.roomDetails.connected) {
-  toast.error("Обождитe партнера-то!")
+  //toast.info("Обождитe партнера-то!")
     return;
   } else {
     const text = message.value;
     const roomId = chatStore.roomDetails.partner;
    // alert('roomId: '+ roomId);
-    const name = userStore.user.details.details.firstname;
+    //const name = userStore.user.details.details.firstname;
     const userId = Cookies.get("user")
       ? JSON.parse(Cookies.get("user")).details.userId
       : "";
       let Msgs = document.getElementById("Msgs")
       if(Msgs){
-    await chatStore.pushMessage({ name, text, roomId, userId });
-    Msgs.scrollTop=Msgs.clientHeight + Msgs.scrollHeight;
-    let a = { name, text, userId, roomId };
+    await chatStore.pushMessage({ name: "Вы", text, roomId, userId });
+    Msgs.scrollTop = Msgs.clientHeight + Msgs.scrollHeight;
+    let a = { name: "Собеседник", text, userId, roomId };
     //alert(JSON.stringify(a))
     socket.emit("newMessage1", a);
     message.value = "";
@@ -115,6 +124,7 @@ onMounted(async () => {
   if (Cookies.get("accessToken") && Cookies.get("user")) {
   try{
   fuck.srcObject = null;
+  camToggleRef.value = camToggle;
   // await chatStore.init();
  // const chatStore = useChatStore();
   //remoteStreamRef.value.srcObject = chatStore.remoteStream;
@@ -151,9 +161,15 @@ onBeforeUnmount(async ()=>{
 </svg>
 </button>
   </div>
-  <div id="menuPanel" :class="{'show':isShow}">
-  <div><button title="Тыловая/фронтальная камера">Тыловая камера</button></div>
-  <div><button title="Демонстрация экрана">Демонстрация экрана</button></div>
+  <div id="menuPanel" :class="{'show':state.isShow}">
+  <div><button 
+   @click="toggleCamera()"
+        id="camToggle" 
+        ref="camToggleRef"
+        disabled
+  title="Тыловая/фронтальная камера">{{ state.frontcam ? "Фронтальная камера" : "Тыловая камера" }}</button></div>
+  <div><button id="screenBtn" ref="screenBtnRef" title="screen sharing" @click="screensharing()" 
+  disabled>{{ state.screensharing ? "Откл. демонстрацию экрана":"Демонстрация экрана" }}</button></div>
   </div>
   </div>
     <div class="top-0 grid w-full grid-cols-2 screens">
@@ -174,7 +190,8 @@ onBeforeUnmount(async ()=>{
         <ExclamationCircleIcon
           @click="toggleReport"
           title="Пожаловаться"
-          class="absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-red hover:opacity-100 top-4 right-4 excl"
+          ref="complain"
+          class="complainznak absolute hidden w-8 h-8 transition-all opacity-50 cursor-pointer report-icon fill-red hover:opacity-100 top-4 right-4 excl"
         ></ExclamationCircleIcon>
 
         <div style="display:grid;grid-template-columns: 1fr 1fr;width:100%;position:absolute;bottom:0;align-items:center; jutify-content:start;"
@@ -184,14 +201,14 @@ onBeforeUnmount(async ()=>{
           <button @click="toggleSound()" class="" title="откл/вкл звук">
             <SpeakerWaveIcon
               v-if="!isMute"
-              class="w-6 h-6 transitionfill-gray-400 hover:fill-white mx-2"
+              class="mute w-6 h-6 transitionfill-gray-400 fill-white mx-2"
             ></SpeakerWaveIcon>
             <SpeakerXMarkIcon
               v-else
-              class="w-6 h-6 transitionfill-gray-400 hover:fill-white mx-2"
+              class="mute w-6 h-6 transitionfill-gray-400 fill-white mx-2"
             ></SpeakerXMarkIcon>
           </button>
-          <button id="fullscreen" title="во весь экран" style="justify-self:end;" class="">
+          <button id="fullscreen" @click="toggleScreen" title="во весь экран" style="justify-self:end;" class="">
           <svg xmlns="http://www.w3.org/2000/svg" fill="blue" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
 </svg>
@@ -231,9 +248,7 @@ onBeforeUnmount(async ()=>{
         <button
           @click="findNewRoom(findRoomArgs)"
           id="btnStart"
-          :disabled="
-            state.loading || state.searching || searchPartnerStore.loading
-          "
+        ref="btnStartRef"
           class="panel-btn"
           
         >
@@ -254,43 +269,9 @@ onBeforeUnmount(async ()=>{
         class="panel-btn"
         @click="searchPartnerStore.toggleCountrySearch(true)"
         >Поиск</button>
-        <!--
-        <button
-          :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
-          @click="searchPartnerStore.toggleCountrySearch(true)"
-          class="panel-btn"
-          
-        >
-          <p v-if="searchPartnerStore.loading || state.loading">Загрузка...</p>
-          <p v-else class="flex items-center">
-            Cтрана:
-            <img
-              class="ml-2"
-              :src="`https://flagcdn.com/w40/${searchPartnerStore.country.toLowerCase()}.webp`"
-              alt=""
-            />
-          </p>
-        </button>
-        <button
-          @click="searchPartnerStore.toggleGender()"
-          :disabled="state.inRoom || searchPartnerStore.loading || state.loading"
-          class="panel-btn"
-          
-        >
-          Пол: {{ searchPartnerStore.gender === "male" ? "🙍🏻‍♂️" : "🙍🏻‍♀️" }}
-        </button>
-        -->
-        <!--
-        <button 
-        @click="toggleCamera()"
-        id="camToggle" 
-        ref="camToggleRef"
-        class="panel-btn"
-        :disabled="!state.inRoom">{{ state.frontcam ? "Front cam" : "Back cam" }}</button>
-        <button 
-        
-        class="panel-btn"
-        disabled>screen</button> -->
+       
+       
+       
       </div>
 
       <form
@@ -333,7 +314,11 @@ onBeforeUnmount(async ()=>{
 
 <style scoped>
 #fullscreen:hover svg{
- stroke:white;
+ stroke: blue;
+
+}
+#fullscreen svg, .mute svg{
+	stroke:white;
 
 }
 #logoutDiv{
@@ -384,27 +369,37 @@ video{
 			background-color: rgba(#000, 0.5);
 	border-radius: 5px;
 }
-#fuck::cue{
-	background-image: linear-gradient(to bottom, dimgray, lightgray);
-	color: darkblue;
-	line-height:1.5;
-	font-weight:bold;
-position:relative;
+#fuck,#REMOTE{
+	--some-image: url(/buddy.svg);
+	--some-flag: url(/buddy.svg);
+	--some-color: rgba(0,0,0,0);
 }
-#fuck::cue::after{
-	content:"fuck";
-	positoon:absolute;
-}
-#fuck::cue(b){
-	color:orange;
-}
-#fuck::region{
-	color:brown;
-}
-#fuck::cue(.foreignphrase){
-	color:blue;
+#fuck::cue(.base), #REMOTE::cue(.base){
+
+	background-image: var(--some-image);
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	font-size:6vw;
+	color:rgba(0,0,0,0);
+
 }
 
+
+#fuck::cue(.flag), #REMOTE::cue(.flag){
+
+	background-image: var(--some-flag);
+	background-position: center;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	font-size:6vw;
+	color:rgba(0,0,0,0);
+
+}
+
+#fuck::cue, #REMOTE::cue{
+	background-color: var(--some-color);
+}
 
 button[disabled].panel-btn, button[disabled].panel-btn:hover{
 cursor:initial;
@@ -568,14 +563,18 @@ line-height:2rem;
 padding:0.6rem;
 border-radius:5px;
 }
-#menuPanel > div > button:hover{
+#menuPanel > div > button:not(:disabled):hover{
 	background:rgba(255,161,97,0.9);
 	color:white;
 }
 #menuPanel.show{
 	display:block;
+	z-index:1;
 }
-
+#camToggle[disabled],#screenBtn[disabled]{
+	color:silver;
+	background:gray;
+}
 
 @media screen and (max-width: 501px){
 #topPanel{
@@ -731,6 +730,61 @@ border-bottom-right-radius: 0.5rem;
 	
 				}
 				
+	/* 285 x 567 */
+	@media screen and (max-height: 286px) and (orientation: landscape){
+	#underpanel{
+				ackground:red;
+				width:100%;
+				
+			}	
+				button.panel-btn{
+					font-size:5.5vh;
+				}
+				button.panel-btn:before{
+					top:1px;
+					box-shadow:none;
+					height:44px;
+					}
+					button.panel-btn:active:not(:disabled){
+  top: 1px;
+  box-shadow:none;
+  }
+  .complainznak{
+	 top:1px;
+	 right:1px;
+ }
+  
+	}
+	@media screen and (max-width: 286px) and (orientation: portrait){
+			#underpanel{
+				ackground:green;
+			}	
+				button.panel-btn{
+					font-size:5.5vw;
+				}
+				button.panel-btn:before{
+					top:1px;
+					box-shadow:none;
+					}
+					button.panel-btn:active:not(:disabled){
+  top: 1px;
+  box-shadow:none;
+  }
+  
+ .complainznak{
+	 top:1px;
+	 right:1px;
+ }
+  
+  
+  
+  
+  
+  
+  
+		}		
+				
+				
 				/* loader */
 	#cloader, #cloader2{
 		position:absolute;
@@ -738,10 +792,12 @@ border-bottom-right-radius: 0.5rem;
 		left:0;
 		width:100%;
 		height:100%;
+		overflow:hidden;
 		display:flex;
 		justify-content:center;
 		align-items:center;
 		background: #262E2A;
+		border-radius:5px;
 	}	
 	
 #cloader.unspinner, #cloader2.unspinner{

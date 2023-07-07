@@ -36,7 +36,7 @@ if(articleIntroduce){
         } else {
           return;
         }
-      }, 1);
+      }, 0.1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
@@ -98,21 +98,21 @@ console.log('yandex-oauth', response.data)
 
       await searchPartner.setLoading(false);
     
-     setTimeout(function(){
+   //  setTimeout(function(){
 		 window.close();
-	  }, 1);
+	//  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
       alert(error);
-      setTimeout(function(){
+    //  setTimeout(function(){
 		 window.close();
-	  }, 1);
+	//  }, 1);
     } finally {
       await searchPartner.setLoading(false);
-      setTimeout(function(){
+     // setTimeout(function(){
 		window.close();
-	  }, 1);
+	//  }, 1);
     }
   };
 

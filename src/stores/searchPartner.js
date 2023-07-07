@@ -2,20 +2,36 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import Cookies from "js-cookie";
 import countries from "../storage/countries.json";
+import { state } from "../socket";
 
 export const useSearchPartner = defineStore("searchPartner", () => {
   const country = ref(Cookies.get("country") || "");
   const countryIndex = ref(Cookies.get("countryIndex" || 0));
   const gender = ref(Cookies.get("gender") || "male");
+  var mygender, suechgender;
   const showCountrySearch = ref(false);
   const loading = ref(false);
   var counta = ref(['all']);//ref(JSON.parse(Cookies.get("countries").c) || []);
+  
+  
+  if(localStorage.getItem("yourgender") !=null){
+	mygender = ref(localStorage.getItem("yourgender"));
+}else{
+	mygender = ref(gender);
+}
+if(localStorage.getItem("suechgender") !=null){
+	suechgender = ref(localStorage.getItem("suechgender"));
+}else{
+	suechgender = ref("female");
+}
 
   const toggleCountrySearch = (v) => {
 	  if(v){
 	  document.body.style.overflow="hidden";
+	  state.isShow =false;
   }else{document.body.style.overflow="initial";}
     showCountrySearch.value = v;
+  
   };
 
   const setCountryIndex = (c) => {
@@ -46,14 +62,48 @@ const setCountries = (v)=>{
 	
 	
 	console.log('countries: ', v[0] );
-	if (Cookies.get("countries")) {
-      Cookies.remove("countries");
-      Cookies.set("countries", JSON.stringify({c: v}));
-    } else {
-      Cookies.set("countries", JSON.stringify({c: v}));
-    }
+	
+	try{
+		if(localStorage.getItem("countries")){
+			localStorage.removeItem("countries");
+			localStorage.setItem("countries", JSON.stringify({"countries": counta.value}));
+		}else{
+				localStorage.removeItem("countries");
+			localStorage.setItem("countries", JSON.stringify({"countries": counta.value}))
+		}
+	}catch(e){
+		alert(e);
+	}
     
 };
+
+const setGender = (v)=>{
+	mygender.value = v;
+	try{
+		if(localStorage.getItem("yourgender")){
+			localStorage.removeItem("yourgender");
+			localStorage.setItem("yourgender", mygender.value);
+		}else{
+			localStorage.setItem("yourgender", mygender.value);
+		}
+	}catch(e){
+		alert(e);
+	} 
+}
+
+const setSuechGender = (v)=>{
+	suechgender.value = v;
+	try{
+		if(localStorage.getItem("suechgender")){
+			localStorage.removeItem("suechgender");
+			localStorage.setItem("suechgender", suechgender.value);
+		}else{
+			localStorage.setItem("suechgender", suechgender.value);
+		}
+	}catch(e){
+		alert(e);
+	}
+}
   const getCountryIndexAndSet = (alpha) => {
     const foundIndex = countries.findIndex((i) => i.alpha1 === alpha);
 
@@ -104,5 +154,9 @@ const setCountries = (v)=>{
     setCountryIndex,
     getCountryIndexAndSet,
     countryIndex,
+    mygender,
+    suechgender,
+    setGender,
+    setSuechGender,
   };
 });

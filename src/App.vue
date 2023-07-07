@@ -9,6 +9,10 @@ import TheNavbar from './components/TheNavbar.vue';
 const searchPartner = useSearchPartner();
 
 onMounted(async () => {
+//alert(navigator.onLine)
+//if(!navigator.onLine) {
+//return;
+//}
   if (Cookies.get("country")) {
     return;
   } else {
@@ -26,6 +30,7 @@ onMounted(async () => {
       await searchPartner.setLoading(false);
     }
   }
+  
 });
 </script>
 

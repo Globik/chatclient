@@ -53,7 +53,7 @@ if(articleIntroduce){
         } else {
           return;
         }
-      }, 1);
+      }, 0.1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
@@ -115,16 +115,16 @@ if(articleIntroduce){
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-      setTimeout(function(){
+    //  setTimeout(function(){
 		  window.close();
-	  }, 1);
+	//  }, 1);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
       alert(error);
-       setTimeout(function(){
+     //  setTimeout(function(){
 		  window.close();
-	  }, 1);
+	 // }, 1);
     } 
   };
 

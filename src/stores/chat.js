@@ -1,7 +1,9 @@
 import { defineStore } from "pinia";
 import { reactive, ref, computed } from "vue";
 import { socket, state } from "../socket";
+import { useToast } from "vue-toastification";
 
+const toast = useToast();
 
 export const useChatStore = defineStore("chat-store", () => {
   const peerConnection = ref(null);
@@ -16,8 +18,10 @@ export const useChatStore = defineStore("chat-store", () => {
     id: "",
     connected: false,
     partner: "",
+    socketId:"",
   });
 const someEvent = new Event("hello", { cancelable: false });
+const screenEnded = new Event("screenended", { cancelable: false });
   const init = async () => {
 		let constraintsa = {
 		audio:{
@@ -41,7 +45,7 @@ const someEvent = new Event("hello", { cancelable: false });
     //fuck.play();
   //  window.streami = localStream.value;
     
-}catch(e){alert(e.name);console.log("hier "+e);}
+}catch(e){toast.error(e.name);console.log("hier "+e);}
 
 
   };
@@ -72,12 +76,37 @@ const someEvent = new Event("hello", { cancelable: false });
 	 
 	 
 	}catch(err){
-		alert(err);
+		toast.error(err);
 	}
 
   }
   
-  
+  async function doSharing(){
+	  try{
+		  const con = { video: { cursor: 'always' }, audio: false };
+          const screenS = await navigator.mediaDevices.getDisplayMedia(con);
+          localStream.value = screenS;
+           const screenTrack = screenS.getVideoTracks()[0];
+        // const screenTrack = screenS.getTracks()[0];	
+           if(screenTrack){
+			   screenTrack.onended = ()=>{
+				   fuck.dispatchEvent(screenEnded);
+			   }
+		   }
+          if(!peerConnection.value){
+			  return;
+		  }
+         
+          if(screenTrack){
+			  const sender = peerConnection.value.getSenders().find(sender=> sender.track.kind === screenTrack.kind);
+			  if(!sender) return;
+			  sender.replaceTrack(screenTrack);
+		  }	  
+	  }catch(e){
+		  toast.error(e);
+		  throw e;
+	  }
+  }
   function createPeer(){
 	
 //var conis = {iceTransportPolicy:"relay","iceServers":[{urls:["stun:45.89.66.167:3478"]},
@@ -96,7 +125,7 @@ const someEvent = new Event("hello", { cancelable: false });
         {
 			urls: [
 			"turn:45.89.66.167:3478?transport=udp",
-			"turn:45.89.66.167:5349?transport=tcp",
+			//"turn:45.89.66.167:5349?transport=tcp",
 			],
 			username:"alik",
 			credential:"1234"
@@ -104,7 +133,7 @@ const someEvent = new Event("hello", { cancelable: false });
       ],
     });
 }catch(e){
-	
+	toast.error(e);
 	console.error(e);
 	return;
 	}
@@ -160,7 +189,7 @@ if('ontrack' in peerConnection.value){
 
 	if(peerConnection.value.connectionState == "failed" || peerConnection.value.connectionState == "closed" || peerConnection.value.connectionState == "disconnected"){
 	//second
-	handleLeave(false);
+	handleLeave(roomDetails.socketId);
 }
 }
 
@@ -183,7 +212,7 @@ function iceConnectionStateChange(e){
 				}else if(peerConnection.value.iceConnectionState == "failed" || 
 				peerConnection.value.iceConnectionState == "disconnected"){
 				//first
-				handleLeave(false);
+				handleLeave(roomDetails.socketId);
 			}else{}
 		}
 	}
@@ -195,6 +224,8 @@ function gatheringStateChange() {
 
   function iceCandidateError(e) {
 	console.error("ice candidate err: ", e.url, e.errorText );
+	toast.error(e.url + " " + e.errorText);
+	handleLeave(roomDetails.socketId);
 }
 
 function onSignalingState(e){
@@ -204,7 +235,7 @@ function onSignalingState(e){
 const handleCandidate = (candidate)=>{
 		var cand = new RTCIceCandidate(candidate);
 		peerConnection.value.addIceCandidate(cand).then(function(){
-		}).catch(function(e){console.error(e)});
+		}).catch(function(e){toast.error(e)});
 }
 
 const createOffer = async(target, from)=>{
@@ -224,7 +255,7 @@ const createOffer = async(target, from)=>{
 	console.log("target:", target, " from: ", from);
 		//wsend({'type': 'offer', offer: pc.localDescription, target: target, from: clientId});
 		socket.emit("offer", d);
-	}).catch(function(err){console.error(err);});
+	}).catch(function(err){toast.error(err);});
 }
   const createAnswer = async (offer, roomId, clientId) => {
 	 // alert(offer);
@@ -238,24 +269,22 @@ const createOffer = async(target, from)=>{
 
     socket.emit("answer", { answer: peerConnection.value.localDescription, roomId : roomId, from: clientId});
     console.log("Answer sent: ", "to: ", roomId, "from: ", clientId);
-}catch(e){console.error(e);}
+}catch(e){toast.error(e);}
   };
   
   
-  const addAnswer = async (answer) => {
+  const addAnswer = async (answer, clientId) => {
    try{
 	// console.log(peerConnection.value.signalingState);
     await  peerConnection.value.setRemoteDescription(answer);
 }catch(e){
-	console.error(e);
+	
+	toast.error(e);
+	handleLeave(clientId);
 	}
   
   };
- const leavePeer = (from) => {
-	
-		handleLeave(from);
-		
-		}
+ 
  
   const pushMessage = async (msg) => {
     messages.push(msg);
@@ -270,7 +299,13 @@ const createOffer = async(target, from)=>{
 	  viedeoInput[key] = value;
 	  return videoInput;
   }
+  const leavePeer = (from) => {
+	
+		handleLeave(from);
+		
+		}
  function handleLeave(from){
+	 //alert("leave");
 	 if(!roomDetails.id)return;
 	if(from)socket.emit("leaveRoom", { to: from,  membersId: roomDetails.partner, roomId: roomDetails.id });
 	if(!peerConnection.value) return;
@@ -279,6 +314,10 @@ const createOffer = async(target, from)=>{
 			track.stop();
 		});
 	}
+	/*
+	for(const sender of peerConnection.value.getSenders()){
+		sender.track.stop();
+	}*/
 		peerConnection.value.close();
 		console.log("pc: ", peerConnection.value.signalingState);
 	    REMOTE.srcObject = null;
@@ -303,7 +342,7 @@ const createOffer = async(target, from)=>{
  const stopStream = ()=>{
 	 if(localStream.value){
 		localStream.value.getTracks().forEach(function(track){
-			track.stop();
+			//track.stop();
 		});
  }
 }
@@ -326,6 +365,7 @@ const createOffer = async(target, from)=>{
     stopStream,
     updateVideoInput,
     changeCam,
+    doSharing,
   };
 
 
