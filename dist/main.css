@@ -127,8 +127,9 @@ padding-right:2px;
 }
 	@media screen and (max-height: 286px) and (orientation: landscape){
 	html,body{
-		-webkit-text-size-adjust:none;
+	/*	-webkit-text-size-adjust:none;
 		text-size-adjust:none;
+		*/ 
 	}
 	.left-img,.right-img{
 		float:none;
@@ -146,7 +147,7 @@ padding-right:2px;
 		width:100%
 	}
 	}
-	@media screen and (max-width: 286px) and (orientation: portrait){
+	@media screen and (max-width: 384px) and (orientation: portrait){
 	html,body{
 		-webkit-text-size-adjust:none;
 		text-size-adjust:none;
@@ -164,7 +165,7 @@ padding-right:2px;
 		margin-bottom:10px;
 	}
 	p.p{
-		font-size:6vw;
+		font-size:5vw;
 	}
 	#mainfooter{
 		padding-bottom:40px;

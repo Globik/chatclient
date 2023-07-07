@@ -499,15 +499,15 @@ transform:translateX(-5px);
 		height:100%;
 	}
 	}
-	@media screen and (max-width: 286px) and (orientation: portrait){
+	@media screen and (max-width: 384px) and (orientation: portrait){
 	.krestikSuka{
 		color:rgb(250,240,190);
 		display:none;
 	}
 	#pform{
-		-webkit-text-size-adjust:none;
-		text-size-adjust:none;
-		font-size:4vw;
+		/*-webkit-text-size-adjust:none;
+		text-size-adjust:none;*/
+		font-size:3vw;
 	}
 	#genderCheck{
 		
@@ -518,7 +518,7 @@ transform:translateX(-5px);
 		display:block;
 	}
 		div.one-c{
-		ackground:green;
+		background:green;
 	}
 	div.lands-c{
 		display:block;

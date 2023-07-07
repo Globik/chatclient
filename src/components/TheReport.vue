@@ -105,7 +105,7 @@ const toggleReport = () => {
 }
 
 }
-@media screen and (max-width: 286px) and (orientation: portrait){
+@media screen and (max-width: 384px) and (orientation: portrait){
 .register-form{
 	overflow:auto;
 	ackground:red;

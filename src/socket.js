@@ -94,7 +94,7 @@ function gotDevices(deviceInfos){
 		}
 	}
 }
-export const getDevice = ()=>{
+export const getDevice = async()=>{
 if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
 alert("your browser navigator.mediaDevices not supported")
 }else{
@@ -103,6 +103,8 @@ alert("your browser navigator.mediaDevices not supported")
 	camToggleRef.value = camToggle;
 	screenBtnRef.value = screenBtn;
 	btnStartRef.value = btnStart;
+	const chatStore = useChatStore();
+	await chatStore.pushMessage({name: "width:height", text: window.innerWidth+":"+window.innerHeight});
 navigator.mediaDevices.enumerateDevices().then(gotDevices).catch(function(err){console.error(err)});
 }
 }
