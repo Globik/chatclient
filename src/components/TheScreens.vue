@@ -84,11 +84,21 @@ const toggleEmojiVisibility = () => {
   emojisVisible.value = !emojisVisible.value;
 };
 const mama=1;
+var userid;
+try{
+if(Cookies.get("user")){
+	userid = JSON.parse(Cookies.get("user")).details.userId;
+	}else{
+		userid = "1";
+	}
+}catch(e){
+	alert(e)
+}
 let nick = "Anonym";//userStore.user.details.details.firstname ? userStore.user.details.details.firstname : "Аноним" ;
 const findRoomArgs = reactive({
   gender: searchPartnerStore.gender,
   country: +searchPartnerStore.countryIndex,
-  userId: Cookies.get("user") ? JSON.parse(Cookies.get("user")).details.userId : "",
+  userId: userid,
   countries:searchPartnerStore.counta,
   nick: nick,
   mygender: searchPartnerStore.mygender,
