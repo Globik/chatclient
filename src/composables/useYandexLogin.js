@@ -77,7 +77,7 @@ console.log("data", data)
         email: data.default_email,
         firstname: data.first_name ? data.first_name : data.login,
         lastname: data.last_name ? data.last_name : data.login,
-        gender: data.sex ? 'female' : "male",
+        gender: data.sex ? data.sex : "male",
         yandexId: data.id,
       });
 
@@ -104,7 +104,7 @@ console.log('yandex-oauth', response.data)
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error);
-      alert(error);
+    //  alert(error);
     //  setTimeout(function(){
 		 window.close();
 	//  }, 1);

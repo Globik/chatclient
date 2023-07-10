@@ -92,7 +92,9 @@ if(Cookies.get("user")){
 		userid = "1";
 	}
 }catch(e){
-	alert(e)
+	//alert(e)
+	console.error(e)
+	userid="1";
 }
 let nick = "Anonym";//userStore.user.details.details.firstname ? userStore.user.details.details.firstname : "Аноним" ;
 const findRoomArgs = reactive({
