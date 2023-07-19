@@ -19,7 +19,7 @@ if(articleIntroduce){
   // basic configuration for request
   const options = {
     client_id: import.meta.env.VITE_GOOGLE_APP,
-    redirect_uri: import.meta.env.DEV ? import.meta.env.VITE_GOOGLE_REDIRECT : import.meta.env.VITE_GOOGLE_REDIRECT_PROD,
+    redirect_uri: "https://chat-roulet.ru/google",//import.meta.env.DEV ? import.meta.env.VITE_GOOGLE_REDIRECT : import.meta.env.VITE_GOOGLE_REDIRECT_PROD,
     response_type: "token",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/user.gender.read https://www.googleapis.com/auth/user.gender.read openid",
