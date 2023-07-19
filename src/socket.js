@@ -43,7 +43,7 @@ const localStreamRef = ref(null);
 //const URL = import.meta.env.DEV? import.meta.env.VITE_SERVER_HOST_DEV : import.meta.env.VITE_SERVER_HOST_PROD;
  const URL = "wss://chat-roulet.ru";
  //let ru=import.meta.env.VITE_SERVER_HOST_PROD
-// alert(Cookies.get("accessToken"));
+// alert(Cookies.get("accessToken"));''
 export const socket = io(URL, {transports: ['websocket'],
   extraHeaders: {
    Authorization: `Bearer ${Cookies.get("accessToken")}`,
