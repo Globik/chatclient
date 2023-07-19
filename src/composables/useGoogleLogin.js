@@ -77,8 +77,12 @@ if(articleIntroduce){
       });
 
       // send request to get userinfo
-      const user = await axios.get(`${getUserUrl}${result.value.access_token}`);
-
+      var user;
+      try{
+      user = await axios.get(`${getUserUrl}${result.value.access_token}`);
+}catch(e){
+	alert("error 1"+e);
+}
       const data = await user.data;
 
       // make username by cutting email (dasturchioka@gmail.com => dasturchioka)
@@ -98,9 +102,11 @@ if(articleIntroduce){
 
       // added to store/cookie
       await userStore.setUser(userInfo);
-
+try{
       const response = await auth.post(`/google-oauth`, { ...userInfo });
-
+}catch(e){
+	alert("error 2 "+e);
+}
       // set token which is from server (not from google) index-a4ce7641.js index-a4ce7641.js 
       console.log(response.data.access_token);
       await userStore.setToken(
