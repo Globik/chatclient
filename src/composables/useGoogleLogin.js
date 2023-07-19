@@ -16,7 +16,7 @@ if(articleIntroduce){
   const searchPartner = useSearchPartner();
   const userStore = useUserStore();
 
-  // basic configuration for request
+  // basic configuration for request 4444
   const options = {
     client_id: import.meta.env.VITE_GOOGLE_APP,
     redirect_uri: "https://chat-roulet.ru/google",//import.meta.env.DEV ? import.meta.env.VITE_GOOGLE_REDIRECT : import.meta.env.VITE_GOOGLE_REDIRECT_PROD,
