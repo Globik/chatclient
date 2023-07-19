@@ -92,7 +92,7 @@ if(Cookies.get("user")){
 		userid = "1";
 	}
 }catch(e){
-	//alert(e)
+	//alert(e)fffff
 	console.error(e)
 	userid="1";
 }
