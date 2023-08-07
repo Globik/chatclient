@@ -121,16 +121,16 @@ try{
       await userStore.updateUser("userId", response.data.userId);
 
       await searchPartner.setLoading(false);
-    //  setTimeout(function(){
+     setTimeout(function(){
 		  window.close();
-	//  }, 1);
+	 }, 1000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
       alert(error);
-     //  setTimeout(function(){
+       setTimeout(function(){
 		  window.close();
-	 // }, 1);
+	  }, 1000);
     } 
   };
 
