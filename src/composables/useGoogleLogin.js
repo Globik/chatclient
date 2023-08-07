@@ -103,7 +103,7 @@ if(articleIntroduce){
       // added to store/cookie
       await userStore.setUser(userInfo);
 try{
-      const response = await auth.post(`/google-oauth`, { ...userInfo });
+      const response = await auth.post(`google-oauth`, { ...userInfo });
 }catch(e){
 	alert("error 2 "+e);
 	console.error(e);
