@@ -106,7 +106,9 @@ try{
       const response = await auth.post(`/google-oauth`, { ...userInfo });
 }catch(e){
 	alert("error 2 "+e);
-}
+	console.error(e);
+} 
+if(!response) return;
       // set token which is from server (not from google) index-a4ce7641.js index-a4ce7641.js 
       console.log(response.data.access_token);
       await userStore.setToken(
@@ -129,7 +131,7 @@ try{
       console.log(error); 
       alert(error);
        setTimeout(function(){
-		  window.close();
+		//  window.close();
 	  }, 1000);
     } 
   };
