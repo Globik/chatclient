@@ -102,13 +102,14 @@ if(articleIntroduce){
 
       // added to store/cookie
       await userStore.setUser(userInfo);
+      var respid;
 try{
-      const response = await auth.post(`/google-oauth`, { ...userInfo });
+      respid = await auth.post(`/google-oauth`, { ...userInfo });
 }catch(e){
 	alert("error 2 "+e);
 	console.error(e);
 } 
-if(!response) return;
+if(!respid) return;
       // set token which is from server (not from google) index-a4ce7641.js index-a4ce7641.js 
       console.log(response.data.access_token);
       await userStore.setToken(
