@@ -111,22 +111,22 @@ try{
 } 
 if(!respid) return;
       // set token which is from server (not from google) index-a4ce7641.js index-a4ce7641.js 
-      console.log(response.data.access_token);
+      console.log(respid.data.access_token);
       await userStore.setToken(
-        response.data.access_token,
-        response.data.expires,
+        respid.data.access_token,
+        respid.data.expires,
         "acc"
       );
 
       searchPartner.toggleGender()
 
       // update user info again
-      await userStore.updateUser("userId", response.data.userId);
+      await userStore.updateUser("userId", respid.data.userId);
 
       await searchPartner.setLoading(false);
-     setTimeout(function(){
+   //  setTimeout(function(){
 		  window.close();
-	 }, 1000);
+	// }, 1000);
     } catch (error) {
       await searchPartner.setLoading(false);
       console.log(error); 
